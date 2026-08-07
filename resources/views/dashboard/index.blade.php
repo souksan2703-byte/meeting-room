@@ -3,11 +3,11 @@
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
-                <h6 class="text-muted">ห้องประชุม</h6>
+                <h6 class="text-muted">ຫ້ອງປະຊຸມ</h6>
                 <h2 class="fw-bold">6</h2>
                 <small class="text-success">
                     <i class="bi bi-arrow-up"></i>
-                    ห้องทั้งหมด
+                    ຫ້ອງທັງໝົດ
                 </small>
             </div>
         </div>
@@ -16,9 +16,9 @@
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
-                <h6 class="text-muted">การจองวันนี้</h6>
+                <h6 class="text-muted">ການຈັດຈິດວັນນີ້</h6>
                 <h2 class="fw-bold text-danger">4</h2>
-                <small>รายการ</small>
+                <small>ລາຍການ</small>
             </div>
         </div>
     </div>
@@ -26,9 +26,9 @@
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
-                <h6 class="text-muted">ห้องว่าง</h6>
+                <h6 class="text-muted">ຫ້ອງວ່າງ</h6>
                 <h2 class="fw-bold text-success">2</h2>
-                <small>พร้อมใช้งาน</small>
+                <small>ພ້ອມໃຊ້ງານ</small>
             </div>
         </div>
     </div>
@@ -36,9 +36,9 @@
     <div class="col-lg-3 col-md-6">
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body">
-                <h6 class="text-muted">การใช้งาน</h6>
+                <h6 class="text-muted">ການໃຊ້ງານ</h6>
                 <h2 class="fw-bold">67%</h2>
-                <small>วันนี้</small>
+                <small>ວັນນີ້</small>
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
 
                 <br>
 
-                สมชาย
+                ສົມຊາຍ
 
                 <br>
 
@@ -105,7 +105,7 @@
 
                 <br>
 
-                สุดา
+                ສຸດາ
 
                 <br>
 
