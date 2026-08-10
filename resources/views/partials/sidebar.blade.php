@@ -20,28 +20,28 @@
         <li class="nav-item">
             <a href="/rooms" class="nav-link text-white py-3 px-4">
                 <i class="bi bi-door-open me-2"></i>
-                ຫ້ອງປະຊຸມ
+                ห้องประชุม
             </a>
         </li>
 
         <li class="nav-item">
             <a href="/bookings" class="nav-link text-white py-3 px-4">
                 <i class="bi bi-calendar-check me-2"></i>
-                ຈອງຫ້້ອງ
+                จองห้อง
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#" class="nav-link text-white py-3 px-4">
                 <i class="bi bi-calendar3 me-2"></i>
-                ປະຕຶທິນ
+                ปฏิทิน
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#" class="nav-link text-white py-3 px-4">
                 <i class="bi bi-bar-chart-line me-2"></i>
-                ລາຍງານ
+                รายงาน
             </a>
         </li>
 

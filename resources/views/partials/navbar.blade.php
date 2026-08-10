@@ -28,21 +28,21 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/rooms">
                         <i class="bi bi-door-open"></i>
-                        ຫຫ້ອງປະຊຸມ
+                        ห้องประชุม
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="/bookings">
                         <i class="bi bi-calendar-check"></i>
-                        ຈອງຫ້້ອງ
+                        จองห้อง
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="#">
                         <i class="bi bi-bar-chart"></i>
-                        ລາຍງານ
+                        รายงาน
                     </a>
                 </li>
 

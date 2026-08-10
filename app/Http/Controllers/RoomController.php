@@ -11,7 +11,7 @@ class RoomController extends Controller
     {
         $rooms = Room::all();
 
-        return view('home', compact('rooms'));
+        return view('rooms.index', compact('rooms'));
     }
 
     public function create(){}

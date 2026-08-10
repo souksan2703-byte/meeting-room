@@ -11,18 +11,25 @@ class AdminDashboardController extends Controller
     {
         $totalRooms = Room::count();
 
-        $totalBookings = Booking::count();
+        $todayBookings = Booking::whereDate(
+            'booking_date',
+            today()
+        )->count();
 
-        $pendingBookings = Booking::where('status', 'pending')->count();
+        $availableRooms = max(
+            $totalRooms - $todayBookings,
+            0
+        );
 
-        $latestBookings = Booking::latest()
+        $latestBookings = Booking::with('room')
+            ->latest()
             ->take(5)
             ->get();
 
-        return view('dashboard', compact(
+        return view('dashboard.index', compact(
             'totalRooms',
-            'totalBookings',
-            'pendingBookings',
+            'todayBookings',
+            'availableRooms',
             'latestBookings'
         ));
     }
