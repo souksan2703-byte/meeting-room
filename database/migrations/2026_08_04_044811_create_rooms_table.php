@@ -11,25 +11,21 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
 
-            $table->id();
+    $table->id();
 
-            $table->string('name');
+    $table->string('name');
 
-            $table->integer('capacity');
+    $table->string('location');
 
-            $table->string('location')
-                  ->nullable();
+    $table->integer('capacity');
 
-            $table->enum('status',[
-                'available',
-                'maintenance'
-            ])
-            ->default('available');
+    $table->text('equipment')->nullable();
 
+    $table->boolean('status')->default(1);
 
-            $table->timestamps();
+    $table->timestamps();
 
-        });
+});
     }
 
 
