@@ -7,30 +7,50 @@ use App\Models\Booking;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
-    {
-        $totalRooms = Room::count();
+   public function index()
+{
+    // จำนวนห้องทั้งหมด
+    $totalRooms = Room::count();
 
-        $todayBookings = Booking::whereDate(
-            'booking_date',
-            today()
-        )->count();
+    // จำนวนการจองของวันนี้
+    $todayBookings = Booking::whereDate(
+        'booking_date',
+        today()
+    )->count();
 
-        $availableRooms = max(
-            $totalRooms - $todayBookings,
-            0
-        );
+    // จำนวนห้องที่ถูกใช้งานในวันนี้
+    // distinct() ป้องกันกรณีห้องเดียวกันมีหลายการจอง
+    $usedRoomsToday = Booking::whereDate(
+        'booking_date',
+        today()
+    )
+    ->distinct('room_id')
+    ->count('room_id');
 
-        $latestBookings = Booking::with('room')
-            ->latest()
-            ->take(5)
-            ->get();
+    // จำนวนห้องว่างวันนี้
+    $availableRooms = max(
+        $totalRooms - $usedRoomsToday,
+        0
+    );
 
-        return view('dashboard.index', compact(
-            'totalRooms',
-            'todayBookings',
-            'availableRooms',
-            'latestBookings'
-        ));
-    }
+    // เปอร์เซ็นต์การใช้งาน
+    $usagePercentage = $totalRooms > 0
+        ? round(($usedRoomsToday / $totalRooms) * 100)
+        : 0;
+
+    // รายการจองล่าสุด
+    $latestBookings = Booking::with('room')
+        ->latest()
+        ->take(5)
+        ->get();
+
+    return view('dashboard.index', compact(
+        'totalRooms',
+        'todayBookings',
+        'usedRoomsToday',
+        'availableRooms',
+        'usagePercentage',
+        'latestBookings'
+    ));
+}
 }
