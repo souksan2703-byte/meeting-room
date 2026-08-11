@@ -104,163 +104,173 @@
     </div>
 
 
-    <!-- ========================= -->
-    <!-- Statistics Cards -->
-    <!-- ========================= -->
+<!-- ========================= -->
+<!-- Statistics Cards -->
+<!-- ========================= -->
 
-    <div class="row g-4 mb-4">
+<div class="row g-4 mb-4">
 
-        <!-- Total Rooms -->
-        <div class="col-lg-3 col-md-6">
+    <!-- 1. ห้องทั้งหมด -->
+    <div class="col-lg-3 col-md-6">
 
-            <div class="card dashboard-card h-100">
+        <div class="card dashboard-card border-0 h-100">
 
-                <div class="card-body">
+            <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
 
-                        <div>
+                    <div>
 
-                            <h6 class="text-muted">
-                                ຫ້ອງປະຊຸມ
-                            </h6>
+                        <h6 class="text-muted mb-2">
+                            ຫ້ອງປະຊຸມ
+                        </h6>
 
-                            <h2 class="fw-bold">
-                                {{ $totalRooms }}
-                            </h2>
+                        <h2 class="fw-bold mb-1">
+                            {{ $totalRooms }}
+                        </h2>
 
-                            <small class="text-success">
-                                <i class="bi bi-building"></i>
-                                ຫ້ອງທັງໝົດ
-                            </small>
+                        <small class="text-muted">
+                            ຫ້ອງທັງໝົດ
+                        </small>
 
-                        </div>
+                    </div>
 
-                        <div class="card-icon icon-blue">
+                    <div class="card-icon icon-blue">
 
-                            <i class="bi bi-building"></i>
-
-                        </div>
+                        <i class="bi bi-building"></i>
 
                     </div>
 
                 </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Today Bookings -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card dashboard-card h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted">
-                                ການຈອງວັນນີ້
-                            </h6>
-
-                            <h2 class="fw-bold text-danger">
-                                {{ $todayBookings }}
-                            </h2>
-
-                            <small class="text-muted">
-                                <i class="bi bi-calendar-check"></i>
-                                ລາຍການ
-                            </small>
-
-                        </div>
-
-                        <div class="card-icon icon-red">
-
-                            <i class="bi bi-calendar-check"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Available Rooms -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card dashboard-card h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted">
-                                ຫ້ອງວ່າງ
-                            </h6>
-
-                            <h2 class="fw-bold text-success">
-                                {{ $availableRooms }}
-                            </h2>
-
-                            <small class="text-success">
-                                <i class="bi bi-check-circle"></i>
-                                ພ້ອມໃຊ້ງານ
-                            </small>
-
-                        </div>
-
-                        <div class="card-icon icon-green">
-
-                            <i class="bi bi-door-open"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Usage -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm rounded-4">
-
-                <div class="card-body">
-
-                    <h6 class="text-muted">ຫ້ອງທີ່ໃຊ້ແລ້ວ</h6>
-
-                    <h2 class="fw-bold">
-                      {{ $usedRoomsToday }}
-                    </h2>
-
-                    <small>
-                      ຫ້ອງທີ່ໃຊ້ງານເສັດແລ້ວມື້ນີ້
-                    </small>
-
-               </div>
-
-            </div>
-
-        </div>
 
             </div>
 
         </div>
 
     </div>
+
+
+    <!-- 2. จองแล้ว -->
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card dashboard-card border-0 h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            ຈອງແລ້ວ
+                        </h6>
+
+                        <h2 class="fw-bold text-warning mb-1">
+                            {{ $bookedRoomsToday }}
+                        </h2>
+
+                        <small class="text-muted">
+                            ຫ້ອງທີ່ຈອງແລ້ວ
+                        </small>
+
+                    </div>
+
+                    <div class="card-icon"
+                         style="background:#fff3cd; color:#ffc107;">
+
+                        <i class="bi bi-calendar-check"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 3. กำลังใช้งาน -->
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card dashboard-card border-0 h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            ການໃຊ້ງານ
+                        </h6>
+
+                        <h2 class="fw-bold text-success mb-1">
+                            {{ $usedRoomsToday }}
+                        </h2>
+
+                        <small class="text-muted">
+                            ຫ້ອງກຳລັງໃຊ້ງານ
+                        </small>
+
+                    </div>
+
+                    <div class="card-icon icon-green">
+
+                        <i class="bi bi-door-open"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- 4. ห้องว่าง -->
+    <div class="col-lg-3 col-md-6">
+
+        <div class="card dashboard-card border-0 h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h6 class="text-muted mb-2">
+                            ຫ້ອງວ່າງ
+                        </h6>
+
+                        <h2 class="fw-bold text-primary mb-1">
+                            {{ $availableRooms }}
+                        </h2>
+
+                        <small class="text-muted">
+                            ຫ້ອງທີ່ຍັງວ່າງ
+                        </small>
+
+                    </div>
+
+                    <div class="card-icon icon-blue">
+
+                        <i class="bi bi-door-closed"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     <div class="row g-4">
@@ -348,55 +358,85 @@
 
                         @foreach($latestBookings as $booking)
 
-                            <div class="border-bottom pb-3 mb-3">
+                   @php
+                         $bookingDate = $booking->booking_date;
+                         $startTime = $booking->start_time;
+                         $endTime = $booking->end_time;
 
-                                <div class="d-flex justify-content-between">
+                         $now = \Carbon\Carbon::now();
 
-                                    <strong>
+                         $start = \Carbon\Carbon::parse(
+                         $bookingDate . ' ' . $startTime
+                        );
 
-                                        {{ $booking->room->name ?? 'ບໍ່ພົບຫ້ອງ' }}
-
-                                    </strong>
-
-                                    <span class="badge bg-warning text-dark">
-
-                                        {{ $booking->status }}
-
-                                    </span>
-
-                                </div>
+                         $end = \Carbon\Carbon::parse(
+                          $bookingDate . ' ' . $endTime
+                     );
+                    @endphp
 
 
-                                <div class="mt-2">
+         <div class="border-bottom pb-3 mb-3">
 
-                                    <i class="bi bi-person"></i>
+                 <div class="d-flex justify-content-between">
 
-                                    {{ $booking->booker_name }}
+                      <strong>
+                           {{ $booking->room->name ?? 'ບໍ່ພົບຫ້ອງ' }}
+                         </strong>
 
-                                </div>
+
+                               @if($now->lt($start))
+
+                             <span class="badge bg-warning text-dark">
+                             ຈອງແລ້ວ
+                             </span>
+
+                             @elseif($now->gte($start) && $now->lt($end))
+
+                             <span class="badge bg-success">
+                                     ກຳລັງໃຊ້ງານ
+                             </span>
+
+                                 @else
+
+                             <span class="badge bg-secondary">
+                                    ສິ້ນສຸດເວລາ
+                        </span>
+
+                         @endif
+
+                     </div>
 
 
-                                <small class="text-muted">
+        <div class="mt-2">
 
-                                    <i class="bi bi-calendar-event"></i>
+            <i class="bi bi-person"></i>
 
-                                    {{ $booking->booking_date }}
+            {{ $booking->booker_name }}
 
-                                    &nbsp;
+        </div>
 
-                                    <i class="bi bi-clock"></i>
 
-                                    {{ $booking->start_time }}
+        <small class="text-muted">
 
-                                    -
+            <i class="bi bi-calendar-event"></i>
 
-                                    {{ $booking->end_time }}
+            {{ $booking->booking_date }}
 
-                                </small>
+            &nbsp;
 
-                            </div>
+            <i class="bi bi-clock"></i>
 
-                        @endforeach
+            {{ $booking->start_time }}
+
+            -
+
+            {{ $booking->end_time }}
+
+        </small>
+
+    </div>
+
+                 @endforeach
 
 
                     @else
