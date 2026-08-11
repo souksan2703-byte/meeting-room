@@ -304,18 +304,8 @@
 
                 <div class="card-body p-4">
 
-                    <div class="calendar-box">
+                    <div id="calendar" style="min-height: 550px;"></div>
 
-                        <div class="text-center">
-
-                            <i class="bi bi-calendar3 fs-1 text-primary"></i>
-
-                            <h5 class="mt-3">
-                                Calendar
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                ກຳລັງຈະເຊື່ອມ FullCalendar
                             </p>
 
                         </div>
