@@ -14,52 +14,34 @@ return new class extends Migration
 
         Schema::create('bookings', function (Blueprint $table) {
 
+    $table->id();
 
-            $table->id();
+    $table->foreignId('room_id')
+          ->constrained()
+          ->cascadeOnDelete();
 
+    $table->string('booker_name');
 
-            // ผู้จอง
-            $table->foreignId('user_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+    $table->string('department');
 
+    $table->string('meeting_title');
 
-            // ห้องประชุม
-            $table->foreignId('room_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+    $table->date('booking_date');
 
+    $table->time('start_time');
 
+    $table->time('end_time');
 
-            $table->string('title');
+    $table->integer('attendees');
 
+    $table->text('note')->nullable();
 
-            $table->dateTime('start_time');
+    $table->string('status')
+          ->default('Pending');
 
+    $table->timestamps();
 
-            $table->dateTime('end_time');
-
-
-
-            $table->text('description')
-                  ->nullable();
-
-
-
-            $table->enum('status',[
-
-                'pending',
-                'approved',
-                'cancelled'
-
-            ])
-            ->default('pending');
-
-
-
-            $table->timestamps();
-
-        });
+});
 
     }
 
