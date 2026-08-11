@@ -4,53 +4,99 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\Booking;
+use Carbon\Carbon;
 
 class AdminDashboardController extends Controller
 {
-   public function index()
-{
-    // จำนวนห้องทั้งหมด
-    $totalRooms = Room::count();
+    public function index()
+    {
+        // เวลาปัจจุบัน
+        $now = Carbon::now();
 
-    // จำนวนการจองของวันนี้
-    $todayBookings = Booking::whereDate(
-        'booking_date',
-        today()
-    )->count();
+        // วันที่วันนี้
+        $today = $now->toDateString();
 
-    // จำนวนห้องที่ถูกใช้งานในวันนี้
-    // distinct() ป้องกันกรณีห้องเดียวกันมีหลายการจอง
-    $usedRoomsToday = Booking::whereDate(
-        'booking_date',
-        today()
-    )
-    ->distinct('room_id')
-    ->count('room_id');
+        // เวลาปัจจุบัน
+        $currentTime = $now->format('H:i:s');
 
-    // จำนวนห้องว่างวันนี้
-    $availableRooms = max(
-        $totalRooms - $usedRoomsToday,
-        0
-    );
 
-    // เปอร์เซ็นต์การใช้งาน
-    $usagePercentage = $totalRooms > 0
-        ? round(($usedRoomsToday / $totalRooms) * 100)
-        : 0;
+        // ==========================================
+        // จำนวนห้องทั้งหมด
+        // ==========================================
 
-    // รายการจองล่าสุด
-    $latestBookings = Booking::with('room')
-        ->latest()
-        ->take(5)
-        ->get();
+        $totalRooms = Room::count();
 
-    return view('dashboard.index', compact(
-        'totalRooms',
-        'todayBookings',
-        'usedRoomsToday',
-        'availableRooms',
-        'usagePercentage',
-        'latestBookings'
-    ));
-}
+
+        // ==========================================
+        // การจองทั้งหมดของวันนี้
+        // ==========================================
+
+        $todayBookings = Booking::whereDate(
+            'booking_date',
+            $today
+        )->count();
+
+
+        // ==========================================
+        // ห้องที่กำลังใช้งานอยู่ตอนนี้
+        // start_time <= เวลาปัจจุบัน
+        // end_time   >  เวลาปัจจุบัน
+        // ==========================================
+
+        $usedRoomsToday = Booking::whereDate(
+            'booking_date',
+            $today
+        )
+        ->where('start_time', '<=', $currentTime)
+        ->where('end_time', '>', $currentTime)
+        ->distinct('room_id')
+        ->count('room_id');
+
+
+        // ==========================================
+        // ห้องที่จองแล้ว แต่ยังไม่ถึงเวลาใช้งาน
+        // ==========================================
+
+        $bookedRoomsToday = Booking::whereDate(
+            'booking_date',
+            $today
+        )
+        ->where('start_time', '>', $currentTime)
+        ->distinct('room_id')
+        ->count('room_id');
+
+
+        // ==========================================
+        // ห้องว่างตอนนี้
+        // ==========================================
+
+        $availableRooms = max(
+            $totalRooms - $usedRoomsToday - $bookedRoomsToday,
+            0
+        );
+
+
+        // ==========================================
+        // รายการจองล่าสุด
+        // ==========================================
+
+        $latestBookings = Booking::with('room')
+            ->latest()
+            ->take(5)
+            ->get();
+
+
+        // ==========================================
+        // ส่งข้อมูลไป Dashboard
+        // ==========================================
+
+        return view('dashboard.index', compact(
+            'totalRooms',
+            'todayBookings',
+            'usedRoomsToday',
+            'bookedRoomsToday',
+            'availableRooms',
+            'latestBookings'
+        ));
+    }
 }
