@@ -14,20 +14,59 @@ class RoomController extends Controller
         return view('rooms.index', compact('rooms'));
     }
 
-    public function create(){}
+    public function create()
+    {
+        return view('rooms.create');
+    }
 
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'capacity' => 'required|integer|min:1',
+        'location' => 'required|string|max:255',
+    ]);
 
-    public function store(Request $request){}
+    Room::create([
+        'name' => $request->name,
+        'capacity' => $request->capacity,
+        'location' => $request->location,
+    ]);
 
+    return redirect()
+        ->route('rooms.index')
+        ->with('success', 'ເພີ່ມຫ້ອງປະຊຸມສຳເລັດ');
+}
 
-    public function show(string $id){}
+   public function update(Request $request, string $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'capacity' => 'required|integer|min:1',
+        'location' => 'required|string|max:255',
+    ]);
 
+    $room = Room::findOrFail($id);
 
-    public function edit(string $id){}
+    $room->update([
+        'name' => $request->name,
+        'capacity' => $request->capacity,
+        'location' => $request->location,
+    ]);
 
+    return redirect()
+        ->route('rooms.index')
+        ->with('success', 'ແກ້ໄຂຫ້ອງປະຊຸມສຳເລັດ');
+}
 
-    public function update(Request $request, string $id){}
+    public function destroy(string $id)
+    {
+        $room = Room::findOrFail($id);
 
+        $room->delete();
 
-    public function destroy(string $id){}
+        return redirect()
+            ->route('rooms.index')
+            ->with('success', 'ລຶບຫ້ອງປະຊຸມສຳເລັດ');
+    }
 }

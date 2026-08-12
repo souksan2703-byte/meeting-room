@@ -15,3 +15,6 @@ Route::get('/dashboard', [AdminDashboardController::class, 'index'])
 Route::resource('rooms', RoomController::class);
 
 Route::resource('bookings', BookingController::class);
+
+Route::get('/calendar/events', [BookingController::class, 'calendarEvents'])
+    ->name('calendar.events');
