@@ -17,6 +17,7 @@ class Booking extends Model
         'end_time',
         'attendees',
         'note',
+        'drinking_water',
         'status',
     ];
 

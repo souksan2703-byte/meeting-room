@@ -19,45 +19,59 @@ class RoomController extends Controller
         return view('rooms.create');
     }
 
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'capacity' => 'required|integer|min:1',
-        'location' => 'required|string|max:255',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'capacity' => 'required|integer|min:1',
+            'location' => 'required|string|max:255',
+        ]);
 
-    Room::create([
-        'name' => $request->name,
-        'capacity' => $request->capacity,
-        'location' => $request->location,
-    ]);
+        Room::create([
+            'name' => $request->name,
+            'capacity' => $request->capacity,
+            'location' => $request->location,
+        ]);
 
-    return redirect()
-        ->route('rooms.index')
-        ->with('success', 'ເພີ່ມຫ້ອງປະຊຸມສຳເລັດ');
-}
+        return redirect()
+            ->route('rooms.index')
+            ->with('success', 'ເພີ່ມຫ້ອງປະຊຸມສຳເລັດ');
+    }
 
-   public function update(Request $request, string $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'capacity' => 'required|integer|min:1',
-        'location' => 'required|string|max:255',
-    ]);
+    public function show(string $id)
+    {
+        $room = Room::findOrFail($id);
 
-    $room = Room::findOrFail($id);
+        return view('rooms.show', compact('room'));
+    }
 
-    $room->update([
-        'name' => $request->name,
-        'capacity' => $request->capacity,
-        'location' => $request->location,
-    ]);
+    public function edit(string $id)
+    {
+        $room = Room::findOrFail($id);
 
-    return redirect()
-        ->route('rooms.index')
-        ->with('success', 'ແກ້ໄຂຫ້ອງປະຊຸມສຳເລັດ');
-}
+        return view('rooms.edit', compact('room'));
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'capacity' => 'required|integer|min:1',
+            'location' => 'required|string|max:255',
+        ]);
+
+        $room = Room::findOrFail($id);
+
+        $room->update([
+            'name' => $request->name,
+            'capacity' => $request->capacity,
+            'location' => $request->location,
+        ]);
+
+        return redirect()
+            ->route('rooms.index')
+            ->with('success', 'ແກ້ໄຂຫ້ອງປະຊຸມສຳເລັດ');
+    }
 
     public function destroy(string $id)
     {
