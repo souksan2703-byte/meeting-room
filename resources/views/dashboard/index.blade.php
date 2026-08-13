@@ -1,434 +1,106 @@
-<!DOCTYPE html>
-<html lang="lo">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
+@section('content')
+<div class="flex">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{-- Sidebar filters --}}
+    <aside class="w-64 shrink-0 pr-6">
+        <h2 class="text-lg font-bold mb-1">Quick Filters</h2>
+        <p class="text-sm text-gray-500 mb-4">Refine room availability</p>
 
-    <title>Meeting Room Dashboard</title>
+        <form method="GET" action="{{ route('dashboard') }}" class="bg-white rounded-lg p-4 shadow-sm">
+            <input type="hidden" name="date" value="{{ $selectedDate }}">
+            <p class="font-semibold text-sm mb-2">Floor</p>
+            @foreach ([1, 2, 3] as $floor)
+                <label class="flex items-center gap-2 mb-2 text-sm">
+                    <input type="checkbox" name="floors[]" value="{{ $floor }}"
+                           onchange="this.form.submit()"
+                           {{ in_array($floor, $selectedFloors) ? 'checked' : '' }}>
+                    Floor {{ $floor }}
+                </label>
+            @endforeach
+        </form>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <a href="{{ route('dashboard') }}" class="block text-center mt-4 border rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50">
+            Reset Filters
+        </a>
+    </aside>
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        body {
-            background-color: #f5f7fb;
-        }
-
-        .dashboard-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-        }
-
-        .dashboard-card h2 {
-            font-size: 32px;
-            margin-top: 10px;
-        }
-
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .icon-blue {
-            background: #e7f1ff;
-            color: #0d6efd;
-        }
-
-        .icon-red {
-            background: #ffe8e8;
-            color: #dc3545;
-        }
-
-        .icon-green {
-            background: #e8f7ee;
-            color: #198754;
-        }
-
-        .icon-purple {
-            background: #f0e8ff;
-            color: #6f42c1;
-        }
-
-        .calendar-box {
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fafbfc;
-            border-radius: 12px;
-        }
-
-        .empty-booking {
-            text-align: center;
-            padding: 30px;
-            color: #888;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container-fluid py-4 px-4">
-
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <div>
-            <h2 class="fw-bold mb-1">
-                Dashboard
-            </h2>
-
-            <p class="text-muted mb-0">
-                ໜ້າຈັດການລະບົບຈອງຫ້ອງປະຊຸມ
-            </p>
+    {{-- Timeline --}}
+    <div class="flex-1">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h1 class="text-3xl font-bold">Dashboard</h1>
+                <p class="text-gray-500">Today's Room Availability</p>
+            </div>
+            <a href="{{ route('rooms.index') }}" class="bg-indigo-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                + New Booking
+            </a>
         </div>
 
-        <div>
-            <span class="badge bg-primary px-3 py-2">
-                <i class="bi bi-speedometer2"></i>
-                Admin
-            </span>
+        <div class="flex items-center gap-4 mb-3 text-sm text-gray-500">
+            <span><span class="inline-block w-2 h-2 rounded-full bg-gray-300 mr-1"></span>Available</span>
+            <span><span class="inline-block w-2 h-2 rounded-full bg-indigo-900 mr-1"></span>Confirmed</span>
+            <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>Pending</span>
         </div>
 
-    </div>
+        <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+            <div class="min-w-[900px]">
 
-
-    <!-- ========================= -->
-    <!-- Statistics Cards -->
-    <!-- ========================= -->
-
-    <div class="row g-4 mb-4">
-
-        <!-- Total Rooms -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card dashboard-card h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted">
-                                ຫ້ອງປະຊຸມ
-                            </h6>
-
-                            <h2 class="fw-bold">
-                                {{ $totalRooms }}
-                            </h2>
-
-                            <small class="text-success">
-                                <i class="bi bi-building"></i>
-                                ຫ້ອງທັງໝົດ
-                            </small>
-
-                        </div>
-
-                        <div class="card-icon icon-blue">
-
-                            <i class="bi bi-building"></i>
-
-                        </div>
-
-                    </div>
-
+                {{-- Hour header --}}
+                <div class="grid border-b" style="grid-template-columns: 220px repeat({{ count($hours) - 1 }}, 1fr);">
+                    <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
+                    @foreach ($hours as $hour)
+                        @if (!$loop->last)
+                            <div class="p-3 text-xs text-gray-500 border-l">{{ sprintf('%02d:00', $hour) }}</div>
+                        @endif
+                    @endforeach
                 </div>
 
-            </div>
-
-        </div>
-
-
-        <!-- Today Bookings -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card dashboard-card h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted">
-                                ການຈອງວັນນີ້
-                            </h6>
-
-                            <h2 class="fw-bold text-danger">
-                                {{ $todayBookings }}
-                            </h2>
-
-                            <small class="text-muted">
-                                <i class="bi bi-calendar-check"></i>
-                                ລາຍການ
-                            </small>
-
-                        </div>
-
-                        <div class="card-icon icon-red">
-
-                            <i class="bi bi-calendar-check"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Available Rooms -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card dashboard-card h-100">
-
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between">
-
-                        <div>
-
-                            <h6 class="text-muted">
-                                ຫ້ອງວ່າງ
-                            </h6>
-
-                            <h2 class="fw-bold text-success">
-                                {{ $availableRooms }}
-                            </h2>
-
-                            <small class="text-success">
-                                <i class="bi bi-check-circle"></i>
-                                ພ້ອມໃຊ້ງານ
-                            </small>
-
-                        </div>
-
-                        <div class="card-icon icon-green">
-
-                            <i class="bi bi-door-open"></i>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Usage -->
-        <div class="col-lg-3 col-md-6">
-
-            <div class="card border-0 shadow-sm rounded-4">
-
-                <div class="card-body">
-
-                    <h6 class="text-muted">ຫ້ອງທີ່ໃຊ້ແລ້ວ</h6>
-
-                    <h2 class="fw-bold">
-                      {{ $usedRoomsToday }}
-                    </h2>
-
-                    <small>
-                      ຫ້ອງທີ່ໃຊ້ງານເສັດແລ້ວມື້ນີ້
-                    </small>
-
-               </div>
-
-            </div>
-
-        </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="row g-4">
-
-
-        <!-- Calendar -->
-        <div class="col-lg-7">
-
-            <div class="card dashboard-card">
-
-                <div class="card-header bg-white border-0 pt-4 px-4">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <h5 class="fw-bold mb-0">
-
-                            <i class="bi bi-calendar3 text-primary"></i>
-
-                            Calendar
-
-                        </h5>
-
-                        <span class="text-muted small">
-                            ຕາຕະລາງການຈອງ
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card-body p-4">
-
-                    <div class="calendar-box">
-
-                        <div class="text-center">
-
-                            <i class="bi bi-calendar3 fs-1 text-primary"></i>
-
-                            <h5 class="mt-3">
-                                Calendar
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                ກຳລັງຈະເຊື່ອມ FullCalendar
+                {{-- Room rows --}}
+                @foreach ($rooms as $room)
+                    <div class="grid border-b relative" style="grid-template-columns: 220px 1fr; min-height: 90px;">
+                        <div class="p-3 border-r">
+                            <a href="{{ route('rooms.show', $room) }}" class="font-semibold hover:underline">{{ $room->name }}</a>
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ $room->capacity }} &bull; Fl {{ $room->floor }}
                             </p>
-
                         </div>
 
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- Latest Bookings -->
-        <div class="col-lg-5">
-
-            <div class="card dashboard-card h-100">
-
-                <div class="card-header bg-white border-0 pt-4 px-4">
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <h5 class="fw-bold mb-0">
-
-                            <i class="bi bi-clock-history text-primary"></i>
-
-                            ລາຍການຈອງລ່າສຸດ
-
-                        </h5>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card-body px-4">
-
-
-                    @if($latestBookings->count() > 0)
-
-                        @foreach($latestBookings as $booking)
-
-                            <div class="border-bottom pb-3 mb-3">
-
-                                <div class="d-flex justify-content-between">
-
-                                    <strong>
-
-                                        {{ $booking->room->name ?? 'ບໍ່ພົບຫ້ອງ' }}
-
-                                    </strong>
-
-                                    <span class="badge bg-warning text-dark">
-
-                                        {{ $booking->status }}
-
-                                    </span>
-
-                                </div>
-
-
-                                <div class="mt-2">
-
-                                    <i class="bi bi-person"></i>
-
-                                    {{ $booking->booker_name }}
-
-                                </div>
-
-
-                                <small class="text-muted">
-
-                                    <i class="bi bi-calendar-event"></i>
-
-                                    {{ $booking->booking_date }}
-
-                                    &nbsp;
-
-                                    <i class="bi bi-clock"></i>
-
-                                    {{ $booking->start_time }}
-
-                                    -
-
-                                    {{ $booking->end_time }}
-
-                                </small>
-
+                        <div class="relative">
+                            {{-- vertical grid lines per hour --}}
+                            <div class="absolute inset-0 grid" style="grid-template-columns: repeat({{ count($hours) - 1 }}, 1fr);">
+                                @for ($i = 0; $i < count($hours) - 1; $i++)
+                                    <div class="border-l h-full"></div>
+                                @endfor
                             </div>
 
-                        @endforeach
+                            {{-- current time indicator --}}
+                            @if ($now->format('Y-m-d') === $selectedDate && $now->hour >= $startHour && $now->hour < $endHour)
+                                @php
+                                    $nowLeft = (($now->hour * 60 + $now->minute - $startHour * 60) / (($endHour - $startHour) * 60)) * 100;
+                                @endphp
+                                <div class="absolute top-0 bottom-0 w-px bg-indigo-500 z-10" style="left: {{ $nowLeft }}%"></div>
+                            @endif
 
-
-                    @else
-
-                        <div class="empty-booking">
-
-                            <i class="bi bi-calendar-x fs-1"></i>
-
-                            <h6 class="mt-3">
-                                ຍັງບໍ່ມີການຈອງ
-                            </h6>
-
-                            <p class="small mb-0">
-                                ເມື່ອມີການຈອງ ຂໍ້ມູນຈະສະແດງຢູ່ບ່ອນນີ້
-                            </p>
-
+                            {{-- booking blocks --}}
+                            @foreach ($room->todayBookings as $booking)
+                                <a href="{{ route('bookings.index') }}"
+                                   class="absolute top-2 bottom-2 rounded-md px-3 py-2 text-white text-xs
+                                          {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-indigo-900' }}"
+                                   style="left: {{ $booking->position['left'] }}%; width: {{ $booking->position['width'] }}%;">
+                                    <p class="font-semibold uppercase tracking-wide">
+                                        @if ($booking->status === 'pending') &#9200; PENDING @else {{ $booking->title }} @endif
+                                    </p>
+                                    <p>{{ $booking->status === 'pending' ? $booking->title : $booking->user->name }}</p>
+                                </a>
+                            @endforeach
                         </div>
-
-                    @endif
-
-
-                </div>
+                    </div>
+                @endforeach
 
             </div>
-
         </div>
-
     </div>
-
-
 </div>
-
-</body>
-
-</html>
+@endsection

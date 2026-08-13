@@ -1,53 +1,56 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background:#C62828;">
-    <div class="container-fluid">
+<nav class="fixed top-0 inset-x-0 h-16 z-50 bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
 
-        <a class="navbar-brand fw-bold" href="/">
-            <i class="bi bi-building"></i>
-            Office Meeting Room
-        </a>
+        {{-- Logo + Nav links --}}
+        <div class="flex items-center gap-10">
+            <a href="{{ route('dashboard') }}" class="text-xl font-bold text-indigo-900">
+                RoomReserve
+            </a>
 
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+                <a href="{{ route('dashboard') }}"
+                   class="pb-1 border-b-2 {{ request()->routeIs('dashboard') ? 'border-indigo-900 text-indigo-900' : 'border-transparent text-gray-500 hover:text-indigo-900' }}">
+                    Dashboard
+                </a>
+                <a href="{{ route('rooms.index') }}"
+                   class="pb-1 border-b-2 {{ request()->routeIs('rooms.*') ? 'border-indigo-900 text-indigo-900' : 'border-transparent text-gray-500 hover:text-indigo-900' }}">
+                    Rooms
+                </a>
+                <a href="{{ route('bookings.index') }}"
+                   class="pb-1 border-b-2 {{ request()->routeIs('bookings.*') ? 'border-indigo-900 text-indigo-900' : 'border-transparent text-gray-500 hover:text-indigo-900' }}">
+                    My Bookings
+                </a>
+                @auth
+                    @if (auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.bookings.index') }}"
+                           class="pb-1 border-b-2 {{ request()->routeIs('admin.*') ? 'border-indigo-900 text-indigo-900' : 'border-transparent text-gray-500 hover:text-indigo-900' }}">
+                            Approvals
+                        </a>
+                    @endif
+                @endauth
+            </div>
+        </div>
 
-            <span class="navbar-toggler-icon"></span>
+        {{-- Right side: profile + logout --}}
+        <div class="flex items-center gap-4">
+            @auth
+                <a href="{{ route('profile.edit') }}" class="text-sm text-gray-600 hover:text-indigo-900">
+                    {{ auth()->user()->name }}
+                </a>
 
-        </button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="text-sm border rounded-lg px-3 py-1.5 text-gray-600 hover:bg-gray-50">
+                        Logout
+                    </button>
+                </form>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-
-            <ul class="navbar-nav ms-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/">
-                        <i class="bi bi-house-door"></i>
-                        Dashboard
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/rooms">
-                        <i class="bi bi-door-open"></i>
-                        ห้องประชุม
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/bookings">
-                        <i class="bi bi-calendar-check"></i>
-                        จองห้อง
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-bar-chart"></i>
-                        รายงาน
-                    </a>
-                </li>
-
-            </ul>
-
+                <div class="w-9 h-9 rounded-full bg-indigo-900 text-white flex items-center justify-center text-sm font-semibold">
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="text-sm text-indigo-900 font-medium">Login</a>
+            @endauth
         </div>
 
     </div>

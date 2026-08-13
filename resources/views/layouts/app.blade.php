@@ -1,43 +1,26 @@
 <!DOCTYPE html>
-<html lang="th">
+<html class="h-full" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Office Meeting Room Booking</title>
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>@yield('title', 'RoomReserve')</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <!-- ใส่ Tailwind Config ที่นี่ -->
+    @stack('styles')
 </head>
-
-<body class="bg-light">
-
-    {{-- Navbar --}}
+<body class="h-full bg-background text-on-background flex flex-col font-body-lg text-body-lg">
     @include('partials.navbar')
 
-    <div class="container-fluid">
-        <div class="row">
-
-            {{-- Sidebar --}}
-            @include('partials.sidebar')
-
-            {{-- Content --}}
-            <main class="col-md-10 ms-sm-auto px-4 py-4">
-                @yield('content')
-            </main>
-
-        </div>
+    <div class="flex flex-1 pt-16 h-full overflow-hidden w-full max-w-container-max mx-auto">
+        @yield('sidebar')
+        
+        <main class="flex-1 overflow-y-auto bg-background p-lg">
+            @yield('content')
+        </main>
     </div>
 
-    {{-- Footer --}}
-    @include('partials.footer')
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    @stack('scripts')
 </body>
 </html>
