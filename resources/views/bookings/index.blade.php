@@ -71,7 +71,7 @@
 
                                 <th>ຜູ້ເຂົ້າຮ່ວມ</th>
 
-                                 <th>ນໍ້າດື່ມ</th>
+                                <th>ນໍ້າດື່ມ</th>
 
                                 <th>ສະຖານະ</th>
 
@@ -128,9 +128,44 @@
                                     <td>
 
                                         <a href="{{ route('bookings.edit', $booking->id) }}"
-                                            class="btn btn-sm btn-outline-primary">
+                                            class="btn btn-sm btn-outline-primary mb-1">
                                             ແກ້ໄຂ
                                         </a>
+
+
+                                        @if($booking->status === 'Pending')
+
+                                            <form action="{{ route('bookings.approve', $booking->id) }}" method="POST"
+                                                class="d-inline">
+
+                                                @csrf
+                                                @method('PATCH')
+
+                                                <button type="submit" class="btn btn-sm btn-success mb-1"
+                                                    onclick="return confirm('ຕ້ອງການອະນຸມັດການຈອງນີ້ບໍ?')">
+                                                    <i class="bi bi-check-circle"></i>
+                                                    ອະນຸມັດ
+                                                </button>
+
+                                            </form>
+
+
+                                            <form action="{{ route('bookings.reject', $booking->id) }}" method="POST"
+                                                class="d-inline">
+
+                                                @csrf
+                                                @method('PATCH')
+
+                                                <button type="submit" class="btn btn-sm btn-warning mb-1"
+                                                    onclick="return confirm('ຕ້ອງການປະຕິເສດການຈອງນີ້ບໍ?')">
+                                                    <i class="bi bi-x-circle"></i>
+                                                    ປະຕິເສດ
+                                                </button>
+
+                                            </form>
+
+                                        @endif
+
 
                                         <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST"
                                             class="d-inline" onsubmit="return confirm('ຕ້ອງການລຶບການຈອງນີ້ບໍ?')">
@@ -138,7 +173,7 @@
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger mb-1">
                                                 ລຶບ
                                             </button>
 

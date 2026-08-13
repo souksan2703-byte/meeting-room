@@ -161,7 +161,69 @@ class BookingController extends Controller
             ->route('bookings.index')
             ->with('success', 'ແກ້ໄຂການຈອງສຳເລັດ');
     }
+    public function calendarEvents()
+    {
+        $bookings = Booking::with('room')->get();
 
+        $events = $bookings->map(function ($booking) {
+
+            return [
+                'id' => $booking->id,
+
+                'title' =>
+                    $booking->room->name .
+                    ' - ' .
+                    $booking->meeting_title,
+
+                'start' =>
+                    $booking->booking_date .
+                    'T' .
+                    $booking->start_time,
+
+                'end' =>
+                    $booking->booking_date .
+                    'T' .
+                    $booking->end_time,
+
+                'extendedProps' => [
+                    'booker_name' => $booking->booker_name,
+                    'department' => $booking->department,
+                    'attendees' => $booking->attendees,
+                    'drinking_water' => $booking->drinking_water,
+                    'status' => $booking->status,
+                    'note' => $booking->note,
+                ],
+            ];
+
+        });
+
+        return response()->json($events);
+    }
+    public function approve(string $id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        $booking->update([
+            'status' => 'Approved',
+        ]);
+
+        return redirect()
+            ->route('bookings.index')
+            ->with('success', 'ອະນຸມັດການຈອງສຳເລັດ');
+    }
+
+    public function reject(string $id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        $booking->update([
+            'status' => 'Rejected',
+        ]);
+
+        return redirect()
+            ->route('bookings.index')
+            ->with('success', 'ປະຕິເສດການຈອງສຳເລັດ');
+    }
     public function destroy(string $id)
     {
         $booking = Booking::findOrFail($id);
