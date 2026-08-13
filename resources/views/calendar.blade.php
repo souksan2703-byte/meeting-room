@@ -5,30 +5,17 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ປະຕິທິນການຈອງ</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.css" rel="stylesheet">
 
     <style>
-
         body {
             background: #f5f7fb;
         }
@@ -53,7 +40,6 @@
             font-size: 16px;
             color: #212529;
         }
-
     </style>
 
 </head>
@@ -61,279 +47,257 @@
 
 <body>
 
-<div class="container-fluid py-4 px-4">
+    <div class="container-fluid py-4 px-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
+            <div>
 
-            <h2 class="fw-bold mb-1">
-                <i class="bi bi-calendar3"></i>
-                ປະຕິທິນການຈອງ
-            </h2>
+                <h2 class="fw-bold mb-1">
+                    <i class="bi bi-calendar3"></i>
+                    ປະຕິທິນການຈອງ
+                </h2>
 
-            <p class="text-muted mb-0">
-                ເບິ່ງລາຍການຈອງຫ້ອງປະຊຸມຕາມວັນທີ
-            </p>
-
-        </div>
-
-
-        <a
-            href="{{ route('bookings.create') }}"
-            class="btn btn-primary"
-        >
-            <i class="bi bi-plus-lg"></i>
-            ເພີ່ມການຈອງ
-        </a>
-
-    </div>
-
-
-    <div class="card calendar-card">
-
-        <div class="card-body p-4">
-
-            <div id="calendar"></div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- Booking Detail Modal -->
-
-<div
-    class="modal fade"
-    id="bookingModal"
-    tabindex="-1"
-    aria-hidden="true"
->
-
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-
-                    <i class="bi bi-calendar-event"></i>
-
-                    ລາຍລະອຽດການຈອງ
-
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
+                <p class="text-muted mb-0">
+                    ເບິ່ງລາຍການຈອງຫ້ອງປະຊຸມຕາມວັນທີ
+                </p>
 
             </div>
 
 
-            <div class="modal-body">
+            <a href="{{ route('bookings.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                ເພີ່ມການຈອງ
+            </a>
 
-                <div class="row g-4">
+        </div>
 
-                    <!-- ห้อง -->
+        <div class="d-flex gap-3 mb-3 flex-wrap">
 
-                    <div class="col-md-6">
+            <div>
+                <span class="badge bg-warning text-dark">
+                    Pending
+                </span>
+                ລໍຖ້າອະນຸມັດ
+            </div>
 
-                        <div class="detail-label">
-                            ຫ້ອງປະຊຸມ
-                        </div>
+            <div>
+                <span class="badge bg-success">
+                    Approved
+                </span>
+                ອະນຸມັດແລ້ວ
+            </div>
 
-                        <div
-                            class="detail-value"
-                            id="modalRoom"
-                        >
-                            -
-                        </div>
+            <div>
+                <span class="badge bg-danger">
+                    Rejected
+                </span>
+                ປະຕິເສດ
+            </div>
 
-                    </div>
+        </div>
 
+        <div class="card calendar-card">
 
-                    <!-- หัวข้อ -->
+            <div class="card-body p-4">
 
-                    <div class="col-md-6">
+                <div id="calendar"></div>
 
-                        <div class="detail-label">
-                            ຫົວຂໍ້ການປະຊຸມ
-                        </div>
+            </div>
 
-                        <div
-                            class="detail-value"
-                            id="modalMeetingTitle"
-                        >
-                            -
-                        </div>
+        </div>
 
-                    </div>
-
-
-                    <!-- ผู้จอง -->
-
-                    <div class="col-md-6">
-
-                        <div class="detail-label">
-                            ຜູ້ຈອງ
-                        </div>
-
-                        <div
-                            class="detail-value"
-                            id="modalBooker"
-                        >
-                            -
-                        </div>
-
-                    </div>
+    </div>
 
 
-                    <!-- หน่วยงาน -->
+    <!-- Booking Detail Modal -->
 
-                    <div class="col-md-6">
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
 
-                        <div class="detail-label">
-                            ພະແນກ / ໜ່ວຍງານ
-                        </div>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
 
-                        <div
-                            class="detail-value"
-                            id="modalDepartment"
-                        >
-                            -
-                        </div>
+            <div class="modal-content">
 
-                    </div>
+                <div class="modal-header">
 
+                    <h5 class="modal-title">
 
-                    <!-- วันที่ -->
+                        <i class="bi bi-calendar-event"></i>
 
-                    <div class="col-md-6">
+                        ລາຍລະອຽດການຈອງ
 
-                        <div class="detail-label">
-                            ວັນທີ
-                        </div>
+                    </h5>
 
-                        <div
-                            class="detail-value"
-                            id="modalDate"
-                        >
-                            -
-                        </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
-                    </div>
+                </div>
 
 
-                    <!-- เวลา -->
+                <div class="modal-body">
 
-                    <div class="col-md-6">
+                    <div class="row g-4">
 
-                        <div class="detail-label">
-                            ເວລາ
-                        </div>
+                        <!-- ห้อง -->
 
-                        <div
-                            class="detail-value"
-                            id="modalTime"
-                        >
-                            -
-                        </div>
+                        <div class="col-md-6">
 
-                    </div>
+                            <div class="detail-label">
+                                ຫ້ອງປະຊຸມ
+                            </div>
 
-
-                    <!-- จำนวนคน -->
-
-                    <div class="col-md-6">
-
-                        <div class="detail-label">
-                            ຈຳນວນຜູ້ເຂົ້າຮ່ວມ
-                        </div>
-
-                        <div
-                            class="detail-value"
-                            id="modalAttendees"
-                        >
-                            -
-                        </div>
-
-                    </div>
-
-
-                    <!-- น้ำดื่ม -->
-
-                    <div class="col-md-6">
-
-                        <div class="detail-label">
-                            ນໍ້າດື່ມ
-                        </div>
-
-                        <div
-                            class="detail-value"
-                            id="modalDrinkingWater"
-                        >
-                            -
-                        </div>
-
-                    </div>
-
-
-                    <!-- สถานะ -->
-
-                    <div class="col-md-6">
-
-                        <div class="detail-label">
-                            ສະຖານະ
-                        </div>
-
-                        <div>
-                            <span
-                                class="badge bg-warning text-dark"
-                                id="modalStatus"
-                            >
+                            <div class="detail-value" id="modalRoom">
                                 -
-                            </span>
+                            </div>
+
                         </div>
 
-                    </div>
 
+                        <!-- หัวข้อ -->
 
-                    <!-- หมายเหตุ -->
+                        <div class="col-md-6">
 
-                    <div class="col-12">
+                            <div class="detail-label">
+                                ຫົວຂໍ້ການປະຊຸມ
+                            </div>
 
-                        <div class="detail-label">
-                            ໝາຍເຫດ
+                            <div class="detail-value" id="modalMeetingTitle">
+                                -
+                            </div>
+
                         </div>
 
-                        <div
-                            class="detail-value"
-                            id="modalNote"
-                        >
-                            -
+
+                        <!-- ผู้จอง -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ຜູ້ຈອງ
+                            </div>
+
+                            <div class="detail-value" id="modalBooker">
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- หน่วยงาน -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ພະແນກ / ໜ່ວຍງານ
+                            </div>
+
+                            <div class="detail-value" id="modalDepartment">
+                                -
+                            </div>
+
+                        </div>
+
+                        <!-- วันที่ -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ວັນທີ
+                            </div>
+
+                            <div class="detail-value" id="modalDate">
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- เวลา -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ເວລາ
+                            </div>
+
+                            <div class="detail-value" id="modalTime">
+                                -
+                            </div>
+
+                        </div>
+
+                        <!-- จำนวนคน -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ຈຳນວນຜູ້ເຂົ້າຮ່ວມ
+                            </div>
+
+                            <div class="detail-value" id="modalAttendees">
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- น้ำดื่ม -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ນໍ້າດື່ມ
+                            </div>
+
+                            <div class="detail-value" id="modalDrinkingWater">
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- สถานะ -->
+
+                        <div class="col-md-6">
+
+                            <div class="detail-label">
+                                ສະຖານະ
+                            </div>
+
+                            <div>
+                                <span class="badge bg-warning text-dark" id="modalStatus">
+                                    -
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- หมายเหตุ -->
+
+                        <div class="col-12">
+
+                            <div class="detail-label">
+                                ໝາຍເຫດ
+                            </div>
+
+                            <div class="detail-value" id="modalNote">
+                                -
+                            </div>
+
                         </div>
 
                     </div>
 
                 </div>
 
-            </div>
 
+                <div class="modal-footer">
 
-            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        ປິດ
+                    </button>
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                >
-                    ປິດ
-                </button>
+                </div>
 
             </div>
 
@@ -341,197 +305,199 @@
 
     </div>
 
-</div>
 
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-></script>
 
+    <script>
 
-<script>
+        document.addEventListener('DOMContentLoaded', function () {
 
-document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
 
-    const calendarEl = document.getElementById('calendar');
+            const bookingModalElement =
+                document.getElementById('bookingModal');
 
-    const bookingModalElement =
-        document.getElementById('bookingModal');
+            const bookingModal =
+                new bootstrap.Modal(bookingModalElement);
 
-    const bookingModal =
-        new bootstrap.Modal(bookingModalElement);
 
+            const calendar = new FullCalendar.Calendar(calendarEl, {
 
-    const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
 
-        initialView: 'dayGridMonth',
+                locale: 'th',
 
-        locale: 'th',
+                height: 'auto',
 
-        height: 'auto',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
 
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
+                buttonText: {
+                    today: 'วันนี้',
+                    month: 'เดือน',
+                    week: 'สัปดาห์',
+                    day: 'วัน'
+                },
 
-        buttonText: {
-            today: 'วันนี้',
-            month: 'เดือน',
-            week: 'สัปดาห์',
-            day: 'วัน'
-        },
+                events: '{{ route("calendar.events") }}',
 
-        events: '{{ route("calendar.events") }}',
 
+                // เปลี่ยนสีตามสถานะ
+                eventDidMount: function (info) {
 
-        eventClick: function(info) {
+                    const status = info.event.extendedProps.status;
 
-            const event = info.event;
+                    if (status === 'Approved') {
 
-            const props = event.extendedProps;
+                        info.el.style.backgroundColor = '#198754';
+                        info.el.style.borderColor = '#198754';
 
+                    } else if (status === 'Rejected') {
 
-            // ห้องประชุม
-            const roomName =
-                event.title.split(' - ')[0];
+                        info.el.style.backgroundColor = '#dc3545';
+                        info.el.style.borderColor = '#dc3545';
 
-            document.getElementById('modalRoom').textContent =
-                roomName;
+                    } else {
 
+                        // Pending
+                        info.el.style.backgroundColor = '#ffc107';
+                        info.el.style.borderColor = '#ffc107';
+                        info.el.style.color = '#000';
 
-            // หัวข้อ
-            const meetingTitle =
-                event.title.split(' - ').slice(1).join(' - ');
+                    }
 
-            document.getElementById('modalMeetingTitle').textContent =
-                meetingTitle || '-';
+                },
 
 
-            // ผู้จอง
-            document.getElementById('modalBooker').textContent =
-                props.booker_name || '-';
+                eventClick: function (info) {
 
+                    const event = info.event;
 
-            // หน่วยงาน
-            document.getElementById('modalDepartment').textContent =
-                props.department || '-';
+                    const props = event.extendedProps;
 
+                    const roomName =
+                        event.title.split(' - ')[0];
 
-            // วันที่
-            if (event.start) {
+                    const meetingTitle =
+                        event.title.split(' - ').slice(1).join(' - ');
 
-                document.getElementById('modalDate').textContent =
-                    event.start.toLocaleDateString('th-TH');
 
-            } else {
+                    document.getElementById('modalRoom').textContent =
+                        roomName || '-';
 
-                document.getElementById('modalDate').textContent =
-                    '-';
+                    document.getElementById('modalMeetingTitle').textContent =
+                        meetingTitle || '-';
 
-            }
+                    document.getElementById('modalBooker').textContent =
+                        props.booker_name || '-';
 
+                    document.getElementById('modalDepartment').textContent =
+                        props.department || '-';
 
-            // เวลา
-            if (event.start && event.end) {
 
-                const startTime =
-                    event.start.toLocaleTimeString(
-                        'th-TH',
-                        {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }
-                    );
+                    if (event.start) {
 
-                const endTime =
-                    event.end.toLocaleTimeString(
-                        'th-TH',
-                        {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }
-                    );
+                        document.getElementById('modalDate').textContent =
+                            event.start.toLocaleDateString('th-TH');
 
-                document.getElementById('modalTime').textContent =
-                    startTime + ' - ' + endTime;
+                    } else {
 
-            } else {
+                        document.getElementById('modalDate').textContent =
+                            '-';
 
-                document.getElementById('modalTime').textContent =
-                    '-';
+                    }
 
-            }
 
+                    if (event.start && event.end) {
 
-            // จำนวนผู้เข้าร่วม
-            document.getElementById('modalAttendees').textContent =
-                props.attendees
-                    ? props.attendees + ' ຄົນ'
-                    : '-';
+                        const startTime =
+                            event.start.toLocaleTimeString(
+                                'th-TH',
+                                {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                }
+                            );
 
+                        const endTime =
+                            event.end.toLocaleTimeString(
+                                'th-TH',
+                                {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                }
+                            );
 
-            // น้ำดื่ม
-            document.getElementById('modalDrinkingWater').textContent =
-                props.drinking_water || '-';
+                        document.getElementById('modalTime').textContent =
+                            startTime + ' - ' + endTime;
 
+                    } else {
 
-            // สถานะ
-            const statusElement =
-                document.getElementById('modalStatus');
+                        document.getElementById('modalTime').textContent =
+                            '-';
 
-            statusElement.textContent =
-                props.status || '-';
+                    }
 
 
-            // เปลี่ยนสีสถานะ
-            statusElement.className =
-                'badge';
+                    document.getElementById('modalAttendees').textContent =
+                        props.attendees
+                            ? props.attendees + ' ຄົນ'
+                            : '-';
 
 
-            if (props.status === 'Approved') {
+                    document.getElementById('modalDrinkingWater').textContent =
+                        props.drinking_water || '-';
 
-                statusElement.classList.add(
-                    'bg-success'
-                );
 
-            } else if (props.status === 'Rejected') {
+                    const statusElement =
+                        document.getElementById('modalStatus');
 
-                statusElement.classList.add(
-                    'bg-danger'
-                );
+                    statusElement.textContent =
+                        props.status || '-';
 
-            } else {
+                    statusElement.className = 'badge';
 
-                statusElement.classList.add(
-                    'bg-warning',
-                    'text-dark'
-                );
 
-            }
+                    if (props.status === 'Approved') {
 
+                        statusElement.classList.add('bg-success');
 
-            // หมายเหตุ
-            document.getElementById('modalNote').textContent =
-                props.note || '-';
+                    } else if (props.status === 'Rejected') {
 
+                        statusElement.classList.add('bg-danger');
 
-            // เปิด Modal
-            bookingModal.show();
+                    } else {
 
-        }
+                        statusElement.classList.add(
+                            'bg-warning',
+                            'text-dark'
+                        );
 
-    });
+                    }
 
 
-    calendar.render();
+                    document.getElementById('modalNote').textContent =
+                        props.note || '-';
 
-});
 
-</script>
+                    bookingModal.show();
+
+                }
+
+            });
+
+
+            calendar.render();
+
+        });
+
+    </script>
 
 </body>
 
