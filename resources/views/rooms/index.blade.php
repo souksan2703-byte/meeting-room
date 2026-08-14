@@ -9,15 +9,9 @@
 
     <title>Meeting Rooms</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
         body {
@@ -35,120 +29,136 @@
 
 <body>
 
-<div class="container-fluid py-4 px-4">
+    @include('partials.navbar')
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container-fluid py-4 px-4">
 
-        <div>
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-            <h2 class="fw-bold mb-1">
-                ຫ້ອງປະຊຸມ
-            </h2>
+            <div>
 
-            <p class="text-muted mb-0">
-                ຈັດການຫ້ອງປະຊຸມ
-            </p>
+                <h2 class="fw-bold mb-1">
+                    ຫ້ອງປະຊຸມ
+                </h2>
+
+                <p class="text-muted mb-0">
+                    ຈັດການຫ້ອງປະຊຸມ
+                </p>
+
+            </div>
+
+            <a href="{{ route('rooms.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                ເພີ່ມຫ້ອງ
+            </a>
 
         </div>
 
-        <a
-            href="{{ route('rooms.create') }}"
-            class="btn btn-primary"
-        >
-            <i class="bi bi-plus-lg"></i>
-            ເພີ່ມຫ້ອງ
-        </a>
 
-    </div>
+        <!-- Success Message -->
+        @if(session('success'))
 
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
 
-    <!-- Success Message -->
-    @if(session('success'))
-
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-
-    @endif
+        @endif
 
 
-    <!-- Rooms -->
-    <div class="row g-4">
+        <!-- Rooms -->
+        <div class="row g-4">
 
-        @forelse($rooms as $room)
+            @forelse($rooms as $room)
 
-            <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6">
 
-                <div class="card room-card h-100">
+                    <div class="card room-card h-100">
 
-                    <div class="card-body">
+                        <div class="card-body">
 
-                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex justify-content-between align-items-start">
 
-                            <div>
+                                <div>
 
-                                <h5 class="fw-bold mb-2">
-                                    {{ $room->name }}
-                                </h5>
+                                    <h5 class="fw-bold mb-2">
+                                        {{ $room->name }}
+                                    </h5>
 
-                                <div class="text-muted">
+                                    <div class="text-muted">
 
-                                    <i class="bi bi-people"></i>
+                                        <i class="bi bi-people"></i>
 
-                                    ຄວາມຈຸ
-                                    {{ $room->capacity }}
-                                    ຄົນ
+                                        ຄວາມຈຸ
+                                        {{ $room->capacity }}
+                                        ຄົນ
+
+                                    </div>
+
+                                </div>
+
+                                <div class="fs-3 text-primary">
+
+                                    <i class="bi bi-building"></i>
 
                                 </div>
 
                             </div>
 
-                            <div class="fs-3 text-primary">
 
-                                <i class="bi bi-building"></i>
+                            <div class="mt-4 d-flex gap-2">
+
+                                <a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-outline-primary btn-sm">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                    ແກ້ໄຂ
+
+                                </a>
+
+
+                                <form action="{{ route('rooms.destroy', $room->id) }}" method="POST"
+                                    onsubmit="return confirm('ຕ້ອງການລຶບຫ້ອງນີ້ແມ່ນບໍ?')">
+
+                                    @csrf
+
+                                    @method('DELETE')
+
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+
+                                        <i class="bi bi-trash"></i>
+
+                                        ລຶບ
+
+                                    </button>
+
+                                </form>
 
                             </div>
 
                         </div>
 
+                    </div>
 
-                        <div class="mt-4 d-flex gap-2">
+                </div>
 
-                            <a
-                                href="{{ route('rooms.edit', $room->id) }}"
-                                class="btn btn-outline-primary btn-sm"
-                            >
+            @empty
 
-                                <i class="bi bi-pencil"></i>
+                <div class="col-12">
 
-                                ແກ້ໄຂ
+                    <div class="card room-card">
 
-                            </a>
+                        <div class="card-body text-center py-5">
 
+                            <i class="bi bi-building fs-1 text-muted"></i>
 
-                            <form
-                                action="{{ route('rooms.destroy', $room->id) }}"
-                                method="POST"
-                                onsubmit="return confirm('ຕ້ອງການລຶບຫ້ອງນີ້ແມ່ນບໍ?')"
-                            >
+                            <h5 class="mt-3">
+                                ຍັງບໍ່ມີຫ້ອງປະຊຸມ
+                            </h5>
 
-                                @csrf
-
-                                @method('DELETE')
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-outline-danger btn-sm"
-                                >
-
-                                    <i class="bi bi-trash"></i>
-
-                                    ລຶບ
-
-                                </button>
-
-                            </form>
+                            <p class="text-muted">
+                                ກົດປຸ່ມ "ເພີ່ມຫ້ອງ" ເພື່ອເພີ່ມຫ້ອງແຫ່ງທຳອິດ
+                            </p>
 
                         </div>
 
@@ -156,38 +166,14 @@
 
                 </div>
 
-            </div>
+            @endforelse
 
-        @empty
-
-            <div class="col-12">
-
-                <div class="card room-card">
-
-                    <div class="card-body text-center py-5">
-
-                        <i class="bi bi-building fs-1 text-muted"></i>
-
-                        <h5 class="mt-3">
-                            ຍັງບໍ່ມີຫ້ອງປະຊຸມ
-                        </h5>
-
-                        <p class="text-muted">
-                            ກົດປຸ່ມ "ເພີ່ມຫ້ອງ" ເພື່ອເພີ່ມຫ້ອງແຫ່ງທຳອິດ
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        @endforelse
+        </div>
 
     </div>
 
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 
 </html>

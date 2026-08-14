@@ -15,6 +15,8 @@
 
 <body class="bg-light">
 
+    @include('partials.navbar')
+
     <div class="container-fluid py-4 px-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -213,6 +215,8 @@
         </div>
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

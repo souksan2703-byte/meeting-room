@@ -203,19 +203,33 @@ class BookingController extends Controller
     {
         $booking = Booking::findOrFail($id);
 
+        // ถ้าอนุมัติไปแล้ว ไม่ต้องทำซ้ำ
+        if ($booking->status === 'Approved') {
+            return redirect()
+                ->route('bookings.index')
+                ->with('error', 'ການຈອງນີ້ອະນຸມັດແລ້ວ');
+        }
+
+        // ตรวจสอบว่ามีการจองอื่นที่ซ้อนช่วงเวลาหรือไม่
         $conflict = Booking::where('room_id', $booking->room_id)
             ->where('booking_date', $booking->booking_date)
             ->where('id', '!=', $booking->id)
             ->where('status', 'Approved')
             ->where(function ($query) use ($booking) {
+
                 $query->where('start_time', '<', $booking->end_time)
                     ->where('end_time', '>', $booking->start_time);
+
             })
             ->exists();
 
         if ($conflict) {
-            return back()
-                ->with('error', 'ບໍ່ສາມາດອະນຸມັດໄດ້ ເນື່ອງຈາກເວລາຈອງຊ້ອນກັບການຈອງທີ່ອະນຸມັດແລ້ວ');
+            return redirect()
+                ->route('bookings.index')
+                ->with(
+                    'error',
+                    'ບໍ່ສາມາດອະນຸມັດໄດ້ ເພາະມີການຈອງທີ່ອະນຸມັດແລ້ວຊ້ອນເວລາກັນ'
+                );
         }
 
         $booking->update([
