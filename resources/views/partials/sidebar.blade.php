@@ -27,14 +27,14 @@
         <li class="nav-item">
             <a href="/bookings" class="nav-link text-white py-3 px-4">
                 <i class="bi bi-calendar-check me-2"></i>
-                ຈອງຫ້້ອງ
+                ຈອງຫ້ອງ
             </a>
         </li>
 
         <li class="nav-item">
             <a href="#" class="nav-link text-white py-3 px-4">
                 <i class="bi bi-calendar3 me-2"></i>
-                ປະຕຶທິນ
+                ປະຕິທິນ
             </a>
         </li>
 

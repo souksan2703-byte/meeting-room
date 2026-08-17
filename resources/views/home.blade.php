@@ -5,13 +5,13 @@
 </head>
 <body>
 
-<h1>ระบบจองห้องประชุม</h1>
+<h1>ລະບົບຈອງຫ້ອງປະຊຸມ</h1>
 
 <table border="1" cellpadding="8">
     <tr>
         <th>ID</th>
-        <th>ชื่อห้อง</th>
-        <th>ความจุ</th>
+        <th>ຊື່ຫ້ອງ</th>
+        <th>ຄວາມຈຸ</th>
     </tr>
 
     @forelse($rooms as $room)
@@ -22,7 +22,7 @@
     </tr>
     @empty
     <tr>
-        <td colspan="3">ยังไม่มีข้อมูลห้องประชุม</td>
+        <td colspan="3">ຍັງບໍ່ມີຫ້ອງປະຊຸມ</td>
     </tr>
     @endforelse
 
