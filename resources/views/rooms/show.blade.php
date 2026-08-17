@@ -34,10 +34,17 @@
     <div class="space-y-4">
         <div class="bg-white rounded-lg shadow-sm p-4">
             <h3 class="font-semibold mb-3">Select Date</h3>
-            <form method="GET" action="{{ route('rooms.show', $room) }}" class="flex items-center justify-between">
-                <button type="submit" name="date" value="{{ $selectedDate->copy()->subDay()->format('Y-m-d') }}">&lt;</button>
-                <span>{{ $selectedDate->format('D, M j, Y') }}</span>
-                <button type="submit" name="date" value="{{ $selectedDate->copy()->addDay()->format('Y-m-d') }}">&gt;</button>
+            <div class="flex items-center justify-between mb-2">
+                <a href="{{ route('rooms.show', ['room' => $room, 'date' => $selectedDate->copy()->subDay()->format('Y-m-d')]) }}"
+                   class="text-gray-400 hover:text-indigo-900 px-2">&lt;</a>
+                <span class="font-medium">{{ $selectedDate->format('D, M j, Y') }}</span>
+                <a href="{{ route('rooms.show', ['room' => $room, 'date' => $selectedDate->copy()->addDay()->format('Y-m-d')]) }}"
+                   class="text-gray-400 hover:text-indigo-900 px-2">&gt;</a>
+            </div>
+            <form method="GET" action="{{ route('rooms.show', $room) }}">
+                <input type="date" name="date" value="{{ $selectedDate->format('Y-m-d') }}"
+                       onchange="this.form.submit()"
+                       class="w-full border rounded-lg p-2 text-sm cursor-pointer">
             </form>
         </div>
 
