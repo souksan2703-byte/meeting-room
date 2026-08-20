@@ -29,7 +29,7 @@
                     </div>
 
                 @endif
-
+                
                 <form action="{{ route('bookings.store') }}" method="POST">
 
                     @csrf
