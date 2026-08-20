@@ -52,6 +52,11 @@ class Booking extends Model
 
     public function attendeesCount(): int
     {
-        return is_array($this->attendees) ? count($this->attendees) : 0;
+        // รองรับข้อมูลเก่า (array รายชื่ออีเมล) และข้อมูลใหม่ (ตัวเลขจำนวนคนล้วนๆ)
+        if (is_array($this->attendees)) {
+            return count($this->attendees);
+        }
+
+        return (int) ($this->attendees ?? 0);
     }
 }

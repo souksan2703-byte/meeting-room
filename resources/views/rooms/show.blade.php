@@ -36,10 +36,10 @@
             <h3 class="font-semibold mb-3">Select Date</h3>
             <div class="flex items-center justify-between mb-2">
                 <a href="{{ route('rooms.show', ['room' => $room, 'date' => $selectedDate->copy()->subDay()->format('Y-m-d')]) }}"
-                   class="text-gray-400 hover:text-indigo-900 px-2">&lt;</a>
+                   class="text-gray-400 hover:text-red-700 px-2">&lt;</a>
                 <span class="font-medium">{{ $selectedDate->format('D, M j, Y') }}</span>
                 <a href="{{ route('rooms.show', ['room' => $room, 'date' => $selectedDate->copy()->addDay()->format('Y-m-d')]) }}"
-                   class="text-gray-400 hover:text-indigo-900 px-2">&gt;</a>
+                   class="text-gray-400 hover:text-red-700 px-2">&gt;</a>
             </div>
             <form method="GET" action="{{ route('rooms.show', $room) }}">
                 <input type="date" name="date" value="{{ $selectedDate->format('Y-m-d') }}"
@@ -61,7 +61,7 @@
                         <button type="submit" name="start" value="{{ $slot['value'] }}"
                                 {{ !$slot['available'] ? 'disabled' : '' }}
                                 class="border rounded-lg py-2 text-sm
-                                       {{ !$slot['available'] ? 'bg-red-50 text-red-300 cursor-not-allowed' : 'hover:bg-indigo-50' }}">
+                                       {{ !$slot['available'] ? 'bg-red-50 text-red-300 cursor-not-allowed' : 'hover:bg-red-50' }}">
                             {{ !$slot['available'] ? '🔒 ' : '' }}{{ $slot['time'] }}
                         </button>
                     @endforeach
@@ -70,7 +70,7 @@
         </div>
 
         <a href="{{ route('bookings.create', $room) }}?date={{ $selectedDate->format('Y-m-d') }}"
-           class="block text-center bg-indigo-900 text-white rounded-lg py-3 font-medium">
+           class="block text-center bg-red-700 text-white rounded-lg py-3 font-medium">
             Book Now &rarr;
         </a>
         @if ($room->requires_approval)

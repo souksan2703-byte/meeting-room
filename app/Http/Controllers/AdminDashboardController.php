@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Room;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
@@ -11,21 +14,45 @@ class AdminDashboardController extends Controller
     {
         $this->authorizeAdmin($request);
 
-        $status = $request->input('status', 'pending');
+        $search = $request->input('q');
 
         $bookings = Booking::with(['room', 'user'])
-            ->when($status !== 'all', fn ($q) => $q->where('status', $status))
-            ->orderBy('start_time')
-            ->paginate(15)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhereHas('room', fn ($r) => $r->where('name', 'like', "%{$search}%"))
+                      ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->orderByDesc('start_time')
+            ->paginate(10)
             ->withQueryString();
 
-        $counts = [
-            'pending' => Booking::where('status', 'pending')->count(),
-            'confirmed' => Booking::where('status', 'confirmed')->count(),
-            'cancelled' => Booking::where('status', 'cancelled')->count(),
+        // --- Stat cards ---
+        $totalRooms = Room::count();
+        $bookingsToday = Booking::whereDate('start_time', now()->format('Y-m-d'))
+            ->where('status', '!=', 'cancelled')
+            ->count();
+        $bookingsYesterday = Booking::whereDate('start_time', now()->subDay()->format('Y-m-d'))
+            ->where('status', '!=', 'cancelled')
+            ->count();
+        $activeUsers = User::count();
+
+        // จำนวนผู้เข้าร่วมประชุมจริงของวันนี้ (รวมทุกห้อง ไม่นับที่ถูกยกเลิก)
+        $totalAttendeesToday = Booking::whereDate('start_time', now()->format('Y-m-d'))
+            ->where('status', '!=', 'cancelled')
+            ->get()
+            ->sum(fn ($booking) => $booking->attendeesCount());
+
+        $stats = [
+            'totalRooms' => $totalRooms,
+            'bookingsToday' => $bookingsToday,
+            'bookingsDelta' => $bookingsToday - $bookingsYesterday,
+            'activeUsers' => $activeUsers,
+            'totalAttendeesToday' => $totalAttendeesToday,
         ];
 
-        return view('admin.bookings.index', compact('bookings', 'status', 'counts'));
+        return view('admin.bookings.index', compact('bookings', 'stats', 'search'));
     }
 
     public function approve(Request $request, Booking $booking)
@@ -34,6 +61,13 @@ class AdminDashboardController extends Controller
 
         $booking->update(['status' => 'confirmed']);
 
+        NotificationService::notifyUser(
+            userId: $booking->user_id,
+            title: 'การจองของคุณได้รับการอนุมัติแล้ว',
+            body: '"' . $booking->title . '" ที่ ' . $booking->room->name . ' ได้รับการยืนยันแล้ว',
+            link: route('bookings.index')
+        );
+
         return back()->with('success', 'อนุมัติการจอง "' . $booking->title . '" เรียบร้อยแล้ว');
     }
 
@@ -41,9 +75,14 @@ class AdminDashboardController extends Controller
     {
         $this->authorizeAdmin($request);
 
-        // schema มีแค่ confirmed/pending/cancelled ไม่มี "rejected" แยก
-        // จึงใช้ cancelled แทนการปฏิเสธ
         $booking->update(['status' => 'cancelled']);
+
+        NotificationService::notifyUser(
+            userId: $booking->user_id,
+            title: 'การจองของคุณถูกปฏิเสธ',
+            body: '"' . $booking->title . '" ที่ ' . $booking->room->name . ' ไม่ได้รับการอนุมัติ',
+            link: route('bookings.index')
+        );
 
         return back()->with('success', 'ปฏิเสธการจอง "' . $booking->title . '" แล้ว');
     }
@@ -55,4 +94,4 @@ class AdminDashboardController extends Controller
     {
         abort_unless($request->user()->role === 'admin', 403, 'สำหรับผู้ดูแลระบบเท่านั้น');
     }
-}   
+}

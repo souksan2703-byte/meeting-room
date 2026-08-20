@@ -8,7 +8,7 @@
             <h2 class="text-xl font-bold">Book Meeting Room</h2>
             <p class="text-sm text-gray-500">Complete the details below to finalize your reservation.</p>
         </div>
-        <span class="bg-indigo-50 text-indigo-700 text-xs px-2 py-1 rounded-full">Draft</span>
+        <span class="bg-red-50 text-red-600 text-xs px-2 py-1 rounded-full">Draft</span>
     </div>
 
     @if ($errors->any())
@@ -21,13 +21,13 @@
         </div>
     @endif
 
-    <div class="bg-indigo-50 rounded-lg p-3 flex justify-between items-center mb-4">
+    <div class="bg-red-50 rounded-lg p-3 flex justify-between items-center mb-4">
         <div>
             <p class="text-xs text-gray-500">Selected Space</p>
-            <p class="font-semibold">{{ $room->name }} - Floor {{ $room->floor }}</p>
+            <p class="font-semibold">{{ $room->name }}</p>
             <p class="text-xs text-gray-500">Capacity: {{ $room->capacity }}</p>
         </div>
-        <a href="{{ route('rooms.index') }}" class="text-xs text-indigo-700">Change Room</a>
+        <a href="{{ route('rooms.index') }}" class="text-xs text-red-600">Change Room</a>
     </div>
 
     <form method="POST" action="{{ route('bookings.store') }}" class="space-y-4">
@@ -65,47 +65,38 @@
         </div>
 
         <div>
-            <label class="text-xs font-medium text-gray-600">Invite Attendees</label>
-            <div class="flex gap-2">
-                <input type="email" id="attendee-input" placeholder="Enter email address"
-                       class="flex-1 border rounded-lg p-2 text-sm">
-                <button type="button" onclick="addAttendee()" class="border rounded-lg px-3 text-sm">+ Add</button>
+            <label class="text-xs font-medium text-gray-600">จำนวนผู้เข้าร่วมประชุม</label>
+            <div class="flex items-center gap-3 mt-1">
+                <button type="button" onclick="changeAttendees(-1)"
+                        class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">−</button>
+
+                <input type="number" id="attendee-count" name="attendees"
+                       value="{{ old('attendees', 1) }}" min="1" max="{{ $room->capacity }}"
+                       class="w-20 text-center border rounded-lg p-2 text-sm font-semibold" required readonly>
+
+                <button type="button" onclick="changeAttendees(1)"
+                        class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">+</button>
+
+                <span class="text-xs text-gray-400">สูงสุด {{ $room->capacity }} คน (ความจุห้อง)</span>
             </div>
-            <div id="attendee-list" class="flex flex-wrap gap-2 mt-2"></div>
         </div>
 
         <div class="flex justify-end gap-3 pt-3 border-t">
             <a href="{{ route('rooms.show', $room) }}" class="border rounded-lg px-4 py-2 text-sm">Cancel</a>
-            <button type="submit" class="bg-indigo-900 text-white rounded-lg px-4 py-2 text-sm">Confirm Booking</button>
+            <button type="submit" class="bg-red-700 text-white rounded-lg px-4 py-2 text-sm">Confirm Booking</button>
         </div>
     </form>
 </div>
 
 <script>
-    const attendees = [];
-    function addAttendee() {
-        const input = document.getElementById('attendee-input');
-        const email = input.value.trim();
-        if (!email) return;
-        attendees.push(email);
-        input.value = '';
-        renderAttendees();
-    }
-    function renderAttendees() {
-        const list = document.getElementById('attendee-list');
-        list.innerHTML = '';
-        attendees.forEach((email, i) => {
-            const chip = document.createElement('span');
-            chip.className = 'bg-gray-100 text-xs rounded-full px-3 py-1';
-            chip.textContent = email;
-            list.appendChild(chip);
+    const maxCapacity = {{ $room->capacity }};
 
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = 'attendees[]';
-            hidden.value = email;
-            list.appendChild(hidden);
-        });
+    function changeAttendees(delta) {
+        const input = document.getElementById('attendee-count');
+        let value = parseInt(input.value || '1', 10) + delta;
+        if (value < 1) value = 1;
+        if (value > maxCapacity) value = maxCapacity;
+        input.value = value;
     }
 </script>
 @endsection

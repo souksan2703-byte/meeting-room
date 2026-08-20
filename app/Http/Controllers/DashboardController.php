@@ -17,20 +17,12 @@ class DashboardController extends Controller
     {
         $view = $request->input('view', 'day'); // day | week | month
         $date = $request->input('date', now()->format('Y-m-d'));
-        $selectedFloors = $request->input('floors', [1, 2]);
-
-        $rooms = Room::when(!empty($selectedFloors), function ($q) use ($selectedFloors) {
-                $q->whereIn('floor', $selectedFloors);
-            })
-            ->orderBy('floor')
-            ->orderBy('name')
-            ->get();
+        $rooms = Room::orderBy('name')->get();
 
         $data = [
             'rooms' => $rooms,
             'view' => $view,
             'selectedDate' => $date,
-            'selectedFloors' => $selectedFloors,
             'now' => now(),
         ];
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Room;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -15,16 +16,20 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         $userId = $request->user()->id;
+        $search = $request->input('q');
 
         $upcoming = Booking::with('room')
             ->where('user_id', $userId)
+            ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
             ->upcoming()
             ->get();
 
         $past = Booking::with('room')
             ->where('user_id', $userId)
+            ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
             ->past()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('bookings.index', compact('upcoming', 'past'));
     }
@@ -53,11 +58,16 @@ class BookingController extends Controller
             'date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
-            'attendees' => ['nullable', 'array'],
-            'attendees.*' => ['email'],
+            'attendees' => ['required', 'integer', 'min:1'],
         ]);
 
         $room = Room::findOrFail($validated['room_id']);
+
+        if ($validated['attendees'] > $room->capacity) {
+            return back()
+                ->withInput()
+                ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $room->capacity . ' คน)']);
+        }
 
         $start = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
         $end = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
@@ -75,7 +85,7 @@ class BookingController extends Controller
                 ->withErrors(['start_time' => 'This room is already booked for part of that time range.']);
         }
 
-        Booking::create([
+        $booking = Booking::create([
             'room_id' => $room->id,
             'user_id' => $request->user()->id,
             'title' => $validated['title'],
@@ -83,8 +93,17 @@ class BookingController extends Controller
             'start_time' => $start,
             'end_time' => $end,
             'status' => $room->requires_approval ? 'pending' : 'confirmed',
-            'attendees' => $validated['attendees'] ?? [],
+            'attendees' => $validated['attendees'],
         ]);
+
+        // แจ้งเตือน Admin ทุกครั้งที่มีการจองใหม่เข้ามา
+        NotificationService::notifyAdmins(
+            title: 'มีการจองห้องประชุมใหม่',
+            body: $request->user()->name . ' จอง ' . $room->name . ' — ' . $booking->title
+                . ' (' . $start->format('d/m/Y H:i') . ' - ' . $end->format('H:i') . ')'
+                . ($booking->status === 'pending' ? ' — รอการอนุมัติ' : ''),
+            link: route('admin.bookings.index')
+        );
 
         return redirect()
             ->route('bookings.index')
@@ -108,13 +127,21 @@ class BookingController extends Controller
             'date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'attendees' => ['required', 'integer', 'min:1'],
         ]);
+
+        if ($validated['attendees'] > $booking->room->capacity) {
+            return back()
+                ->withInput()
+                ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $booking->room->capacity . ' คน)']);
+        }
 
         $booking->update([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'start_time' => Carbon::parse($validated['date'] . ' ' . $validated['start_time']),
             'end_time' => Carbon::parse($validated['date'] . ' ' . $validated['end_time']),
+            'attendees' => $validated['attendees'],
         ]);
 
         return redirect()->route('bookings.index')->with('success', 'Booking updated.');

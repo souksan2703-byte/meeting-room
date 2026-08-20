@@ -29,7 +29,7 @@
         </div>
     @endif
 
-    <div class="bg-indigo-50 rounded-lg p-3 flex justify-between items-center mb-4">
+    <div class="bg-red-50 rounded-lg p-3 flex justify-between items-center mb-4">
         <div>
             <p class="text-xs text-gray-500">Room</p>
             <p class="font-semibold">{{ $booking->room->name }}</p>
@@ -74,10 +74,39 @@
                       class="w-full border rounded-lg p-2 text-sm">{{ old('description', $booking->description) }}</textarea>
         </div>
 
+        <div>
+            <label class="text-xs font-medium text-gray-600">จำนวนผู้เข้าร่วมประชุม</label>
+            <div class="flex items-center gap-3 mt-1">
+                <button type="button" onclick="changeAttendees(-1)"
+                        class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">−</button>
+
+                <input type="number" id="attendee-count" name="attendees"
+                       value="{{ old('attendees', $booking->attendees ?? 1) }}" min="1" max="{{ $booking->room->capacity }}"
+                       class="w-20 text-center border rounded-lg p-2 text-sm font-semibold" required readonly>
+
+                <button type="button" onclick="changeAttendees(1)"
+                        class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">+</button>
+
+                <span class="text-xs text-gray-400">สูงสุด {{ $booking->room->capacity }} คน (ความจุห้อง)</span>
+            </div>
+        </div>
+
         <div class="flex justify-end gap-3 pt-3 border-t">
             <a href="{{ route('bookings.index') }}" class="border rounded-lg px-4 py-2 text-sm">Cancel</a>
-            <button type="submit" class="bg-indigo-900 text-white rounded-lg px-4 py-2 text-sm">Save Changes</button>
+            <button type="submit" class="bg-red-700 text-white rounded-lg px-4 py-2 text-sm">Save Changes</button>
         </div>
     </form>
 </div>
+
+<script>
+    const maxCapacity = {{ $booking->room->capacity }};
+
+    function changeAttendees(delta) {
+        const input = document.getElementById('attendee-count');
+        let value = parseInt(input.value || '1', 10) + delta;
+        if (value < 1) value = 1;
+        if (value > maxCapacity) value = maxCapacity;
+        input.value = value;
+    }
+</script>
 @endsection

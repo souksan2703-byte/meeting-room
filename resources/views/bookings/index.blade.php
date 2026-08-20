@@ -15,7 +15,7 @@
                 <option value="{{ route('bookings.index', ['status' => 'past']) }}" {{ request('status') === 'past' ? 'selected' : '' }}>Past Only</option>
             </select>
         </div>
-        <a href="{{ route('rooms.index') }}" class="bg-indigo-900 text-white px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap">
+        <a href="{{ route('rooms.index') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap">
             + New Booking
         </a>
     </div>
@@ -29,12 +29,12 @@
 <h2 class="text-lg font-bold mb-3">Upcoming</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
     @forelse ($upcoming as $booking)
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-indigo-900 p-4">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-red-700 p-4">
             <div class="flex justify-between items-start">
                 <h3 class="font-bold text-lg">{{ $booking->room->name }}</h3>
                 <span class="text-xs px-2 py-1 rounded-full flex items-center gap-1 whitespace-nowrap
                     {{ match($booking->status) {
-                        'confirmed' => 'bg-indigo-50 text-indigo-700',
+                        'confirmed' => 'bg-green-50 text-green-700',
                         'pending' => 'bg-yellow-50 text-yellow-700',
                         default => 'bg-gray-100 text-gray-600',
                     } }}">
@@ -52,7 +52,7 @@
             </div>
 
             <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-500 flex items-center gap-1">👥 {{ is_array($booking->attendees) ? count($booking->attendees) : 0 }} Attendees</span>
+                <span class="text-sm text-gray-500 flex items-center gap-1">👥 {{ $booking->attendeesCount() }} Attendees</span>
                 <div class="flex gap-2">
                     <a href="{{ route('bookings.edit', $booking) }}" class="border rounded-lg px-3 py-1 text-sm">Edit</a>
                     <form method="POST" action="{{ route('bookings.destroy', $booking) }}"
@@ -97,7 +97,7 @@
                         </span>
                     </td>
                     <td class="p-3 text-right">
-                        <a href="{{ route('rooms.show', $booking->room) }}" class="text-indigo-700">Rebook</a>
+                        <a href="{{ route('rooms.show', $booking->room) }}" class="text-red-600">Rebook</a>
                     </td>
                 </tr>
             @empty

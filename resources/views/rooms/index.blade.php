@@ -16,8 +16,8 @@
         <a href="{{ route('rooms.show', $room) }}"
            class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
 
-            <div class="h-32 bg-indigo-50 flex items-center justify-center">
-                <span class="text-indigo-300 text-4xl">🏢</span>
+            <div class="h-32 bg-red-50 flex items-center justify-center">
+                <span class="text-red-300 text-4xl">🏢</span>
             </div>
 
             <div class="p-4">
