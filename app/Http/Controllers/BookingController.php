@@ -2,265 +2,179 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Room;
+use App\Services\NotificationService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class BookingController extends Controller
 {
-    public function index()
+    /**
+     * "My Bookings" page (Image 4)
+     */
+    public function index(Request $request)
     {
-        $bookings = Booking::with('room')
-            ->orderBy('booking_date')
-            ->orderBy('start_time')
+        $userId = $request->user()->id;
+        $search = $request->input('q');
+
+        $upcoming = Booking::with('room')
+            ->where('user_id', $userId)
+            ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
+            ->upcoming()
             ->get();
 
-        return view('bookings.index', compact('bookings'));
+        $past = Booking::with('room')
+            ->where('user_id', $userId)
+            ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
+            ->past()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('bookings.index', compact('upcoming', 'past'));
     }
 
-    public function create()
+    /**
+     * "Book Meeting Room" form (Image 3), pre-filled from the room page.
+     */
+    public function create(Request $request, Room $room)
     {
-        $rooms = Room::orderBy('name')->get();
+        $date = $request->input('date', now()->format('Y-m-d'));
+        $start = $request->input('start'); // e.g. "11:30"
 
-        return view('bookings.create', compact('rooms'));
+        return view('bookings.create', [
+            'room' => $room,
+            'date' => $date,
+            'start' => $start,
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'room_id' => 'required|exists:rooms,id',
-            'booker_name' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'meeting_title' => 'required|string|max:255',
-            'booking_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'attendees' => 'required|integer|min:1',
-            'note' => 'nullable|string',
-            'drinking_water' => 'nullable|string|max:255',
+        $validated = $request->validate([
+            'room_id' => ['required', 'exists:rooms,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'attendees' => ['required', 'integer', 'min:1'],
         ]);
 
-        // ตรวจสอบว่าห้องถูกจองซ้ำในช่วงเวลาเดียวกันหรือไม่
-        $conflict = Booking::where('room_id', $request->room_id)
-            ->where('booking_date', $request->booking_date)
-            ->where(function ($query) use ($request) {
+        $room = Room::findOrFail($validated['room_id']);
 
-                $query->where('start_time', '<', $request->end_time)
-                    ->where('end_time', '>', $request->start_time);
+        if ($validated['attendees'] > $room->capacity) {
+            return back()
+                ->withInput()
+                ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $room->capacity . ' คน)']);
+        }
 
-            })
+        $start = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
+        $end = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
+
+        // Prevent double-booking the same room/time
+        $overlaps = $room->bookings()
+            ->where('status', '!=', 'cancelled')
+            ->where('start_time', '<', $end)
+            ->where('end_time', '>', $start)
             ->exists();
 
-        if ($conflict) {
+        if ($overlaps) {
             return back()
                 ->withInput()
-                ->with('error', 'ຫ້ອງນີ້ຖືກຈອງໃນເວລານີ້ແລ້ວ');
+                ->withErrors(['start_time' => 'This room is already booked for part of that time range.']);
         }
 
-        // ตรวจจำนวนผู้เข้าร่วมไม่ให้เกินความจุห้อง
-        $room = Room::findOrFail($request->room_id);
-
-        if ($request->attendees > $room->capacity) {
-            return back()
-                ->withInput()
-                ->with('error', 'ຈຳນວນຜູ້ເຂົ້າຮ່ວມເກີນຄວາມຈຸຂອງຫ້ອງ');
-        }
-
-        Booking::create([
-            'room_id' => $request->room_id,
-            'booker_name' => $request->booker_name,
-            'department' => $request->department,
-            'meeting_title' => $request->meeting_title,
-            'booking_date' => $request->booking_date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'attendees' => $request->attendees,
-            'note' => $request->note,
-            'drinking_water' => $request->drinking_water,
-            'status' => 'Pending',
+        $booking = Booking::create([
+            'room_id' => $room->id,
+            'user_id' => $request->user()->id,
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'start_time' => $start,
+            'end_time' => $end,
+            'status' => $room->requires_approval ? 'pending' : 'confirmed',
+            'attendees' => $validated['attendees'],
         ]);
+
+        // แจ้งเตือน Admin ทุกครั้งที่มีการจองใหม่เข้ามา
+        NotificationService::notifyAdmins(
+            title: 'มีการจองห้องประชุมใหม่',
+            body: $request->user()->name . ' จอง ' . $room->name . ' — ' . $booking->title
+                . ' (' . $start->format('d/m/Y H:i') . ' - ' . $end->format('H:i') . ')'
+                . ($booking->status === 'pending' ? ' — รอการอนุมัติ' : ''),
+            link: route('admin.bookings.index')
+        );
 
         return redirect()
             ->route('bookings.index')
-            ->with('success', 'ເພີ່ມການຈອງຫ້ອງສຳເລັດ');
+            ->with('success', 'Booking confirmed for ' . $room->name . '.');
     }
 
-    public function show(string $id)
+    public function edit(Booking $booking)
     {
-        $booking = Booking::with('room')->findOrFail($id);
+        $this->authorizeOwner($booking);
 
-        return view('bookings.show', compact('booking'));
+        return view('bookings.edit', compact('booking'));
     }
 
-    public function edit(string $id)
+    public function update(Request $request, Booking $booking)
     {
-        $booking = Booking::findOrFail($id);
-        $rooms = Room::orderBy('name')->get();
+        $this->authorizeOwner($booking);
 
-        return view('bookings.edit', compact('booking', 'rooms'));
-    }
-
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'room_id' => 'required|exists:rooms,id',
-            'booker_name' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'meeting_title' => 'required|string|max:255',
-            'booking_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'attendees' => 'required|integer|min:1',
-            'note' => 'nullable|string',
-            'drinking_water' => 'nullable|string|max:255',
-            'status' => 'required|string',
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'attendees' => ['required', 'integer', 'min:1'],
         ]);
 
-        $booking = Booking::findOrFail($id);
+        if ($validated['attendees'] > $booking->room->capacity) {
+            return back()
+                ->withInput()
+                ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $booking->room->capacity . ' คน)']);
+        }
 
-        $conflict = Booking::where('room_id', $request->room_id)
-            ->where('booking_date', $request->booking_date)
+        $newStart = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
+        $newEnd = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
+
+        // เช็คว่าเวลาที่แก้ไขใหม่ไปทับกับ booking อื่นในห้องเดียวกันหรือไม่ (ไม่นับตัวเองและที่ยกเลิกไปแล้ว)
+        $overlaps = $booking->room->bookings()
             ->where('id', '!=', $booking->id)
-            ->where(function ($query) use ($request) {
-
-                $query->where('start_time', '<', $request->end_time)
-                    ->where('end_time', '>', $request->start_time);
-
-            })
+            ->where('status', '!=', 'cancelled')
+            ->where('start_time', '<', $newEnd)
+            ->where('end_time', '>', $newStart)
             ->exists();
 
-        if ($conflict) {
+        if ($overlaps) {
             return back()
                 ->withInput()
-                ->with('error', 'ຫ້ອງນີ້ຖືກຈອງໃນເວລານີ້ແລ້ວ');
-        }
-
-        $room = Room::findOrFail($request->room_id);
-
-        if ($request->attendees > $room->capacity) {
-            return back()
-                ->withInput()
-                ->with('error', 'ຈຳນວນຜູ້ເຂົ້າຮ່ວມເກີນຄວາມຈຸຂອງຫ້ອງ');
+                ->withErrors(['start_time' => 'ห้องนี้ถูกจองในช่วงเวลาดังกล่าวไปแล้ว']);
         }
 
         $booking->update([
-            'room_id' => $request->room_id,
-            'booker_name' => $request->booker_name,
-            'department' => $request->department,
-            'meeting_title' => $request->meeting_title,
-            'booking_date' => $request->booking_date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'attendees' => $request->attendees,
-            'note' => $request->note,
-            'drinking_water' => $request->drinking_water,
-            'status' => $request->status,
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'start_time' => $newStart,
+            'end_time' => $newEnd,
+            'attendees' => $validated['attendees'],
         ]);
 
-        return redirect()
-            ->route('bookings.index')
-            ->with('success', 'ແກ້ໄຂການຈອງສຳເລັດ');
-    }
-    public function calendarEvents()
-    {
-        $bookings = Booking::with('room')->get();
-
-        $events = $bookings->map(function ($booking) {
-
-            return [
-                'id' => $booking->id,
-
-                'title' =>
-                    $booking->room->name .
-                    ' - ' .
-                    $booking->meeting_title,
-
-                'start' =>
-                    $booking->booking_date .
-                    'T' .
-                    $booking->start_time,
-
-                'end' =>
-                    $booking->booking_date .
-                    'T' .
-                    $booking->end_time,
-
-                'extendedProps' => [
-                    'booker_name' => $booking->booker_name,
-                    'department' => $booking->department,
-                    'attendees' => $booking->attendees,
-                    'drinking_water' => $booking->drinking_water,
-                    'status' => $booking->status,
-                    'note' => $booking->note,
-                ],
-            ];
-
-        });
-
-        return response()->json($events);
-    }
-    public function approve(string $id)
-    {
-        $booking = Booking::findOrFail($id);
-
-        // ถ้าอนุมัติไปแล้ว ไม่ต้องทำซ้ำ
-        if ($booking->status === 'Approved') {
-            return redirect()
-                ->route('bookings.index')
-                ->with('error', 'ການຈອງນີ້ອະນຸມັດແລ້ວ');
-        }
-
-        // ตรวจสอบว่ามีการจองอื่นที่ซ้อนช่วงเวลาหรือไม่
-        $conflict = Booking::where('room_id', $booking->room_id)
-            ->where('booking_date', $booking->booking_date)
-            ->where('id', '!=', $booking->id)
-            ->where('status', 'Approved')
-            ->where(function ($query) use ($booking) {
-
-                $query->where('start_time', '<', $booking->end_time)
-                    ->where('end_time', '>', $booking->start_time);
-
-            })
-            ->exists();
-
-        if ($conflict) {
-            return redirect()
-                ->route('bookings.index')
-                ->with(
-                    'error',
-                    'ບໍ່ສາມາດອະນຸມັດໄດ້ ເພາະມີການຈອງທີ່ອະນຸມັດແລ້ວຊ້ອນເວລາກັນ'
-                );
-        }
-
-        $booking->update([
-            'status' => 'Approved',
-        ]);
-
-        return redirect()
-            ->route('bookings.index')
-            ->with('success', 'ອະນຸມັດການຈອງສຳເລັດ');
+        return redirect()->route('bookings.index')->with('success', 'Booking updated.');
     }
 
-    public function reject(string $id)
+    public function destroy(Booking $booking)
     {
-        $booking = Booking::findOrFail($id);
+        $this->authorizeOwner($booking);
 
-        $booking->update([
-            'status' => 'Rejected',
-        ]);
+        $booking->update(['status' => 'cancelled']);
 
-        return redirect()
-            ->route('bookings.index')
-            ->with('success', 'ປະຕິເສດການຈອງສຳເລັດ');
+        return back()->with('success', 'Booking cancelled.');
     }
-    public function destroy(string $id)
+
+    private function authorizeOwner(Booking $booking): void
     {
-        $booking = Booking::findOrFail($id);
-
-        $booking->delete();
-
-        return redirect()
-            ->route('bookings.index')
-            ->with('success', 'ລຶບການຈອງສຳເລັດ');
+        abort_unless($booking->user_id === request()->user()->id, 403);
     }
 }

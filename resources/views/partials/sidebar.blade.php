@@ -1,50 +1,7 @@
-<div class="col-md-2 d-none d-md-block bg-dark text-white min-vh-100 p-0">
-
-    <div class="p-3 text-center border-bottom border-secondary">
-        <h5 class="fw-bold mb-0">
-            <i class="bi bi-building"></i>
-            Office
-        </h5>
-        <small>Meeting Room Booking</small>
+<aside class="bg-surface-container-low w-64 fixed left-0 top-16 border-r border-outline-variant flex flex-col p-md gap-sm z-40 hidden md:flex h-full">
+    <div class="mb-lg">
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-1">Quick Filters</h2>
     </div>
-
-    <ul class="nav flex-column mt-3">
-
-        <li class="nav-item">
-            <a href="/" class="nav-link text-white py-3 px-4">
-                <i class="bi bi-speedometer2 me-2"></i>
-                Dashboard
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="/rooms" class="nav-link text-white py-3 px-4">
-                <i class="bi bi-door-open me-2"></i>
-                ຫ້ອງປະຊຸມ
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="/bookings" class="nav-link text-white py-3 px-4">
-                <i class="bi bi-calendar-check me-2"></i>
-                ຈອງຫ້ອງ
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="#" class="nav-link text-white py-3 px-4">
-                <i class="bi bi-calendar3 me-2"></i>
-                ປະຕິທິນ
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="#" class="nav-link text-white py-3 px-4">
-                <i class="bi bi-bar-chart-line me-2"></i>
-                ລາຍງານ
-            </a>
-        </li>
-
-    </ul>
-
-</div>
+    <!-- ส่วนปุ่ม Floor, Capacity, Equipment -->
+    <button class="mt-auto mb-lg py-2 border border-outline-variant rounded-lg text-secondary">Reset Filters</button>
+</aside>

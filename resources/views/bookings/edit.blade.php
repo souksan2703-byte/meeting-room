@@ -1,335 +1,112 @@
-<!DOCTYPE html>
-<html lang="lo">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>ແກ້ໄຂການຈອງ</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-</head>
-
-<body class="bg-light">
-
-<div class="container py-5">
-
-    <div class="card shadow-sm">
-
-        <div class="card-body p-4">
-
-            <h2 class="fw-bold mb-4">
-                ແກ້ໄຂການຈອງຫ້ອງປະຊຸມ
-            </h2>
-
-            @if(session('error'))
-
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-
-            @endif
-
-            @if($errors->any())
-
-                <div class="alert alert-danger">
-
-                    <ul class="mb-0">
-
-                        @foreach($errors->all() as $error)
-
-                            <li>{{ $error }}</li>
-
-                        @endforeach
-
-                    </ul>
-
-                </div>
-
-            @endif
-
-
-            <form
-                action="{{ route('bookings.update', $booking->id) }}"
-                method="POST"
-            >
-
-                @csrf
-
-                @method('PUT')
-
-                <div class="row g-3">
-
-                    {{-- ห้องประชุม --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ຫ້ອງປະຊຸມ
-                        </label>
-
-                        <select
-                            name="room_id"
-                            class="form-select"
-                            required
-                        >
-
-                            <option value="">
-                                -- ເລືອກຫ້ອງ --
-                            </option>
-
-                            @foreach($rooms as $room)
-
-                                <option
-                                    value="{{ $room->id }}"
-                                    {{ old('room_id', $booking->room_id) == $room->id ? 'selected' : '' }}
-                                >
-                                    {{ $room->name }}
-                                    ({{ $room->capacity }} ຄົນ)
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-
-                    {{-- ผู้จอง --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ຊື່ຜູ້ຈອງ
-                        </label>
-
-                        <input
-                            type="text"
-                            name="booker_name"
-                            class="form-control"
-                            value="{{ old('booker_name', $booking->booker_name) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- หน่วยงาน --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ພະແນກ / ໜ່ວຍງານ
-                        </label>
-
-                        <input
-                            type="text"
-                            name="department"
-                            class="form-control"
-                            value="{{ old('department', $booking->department) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- หัวข้อ --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ຫົວຂໍ້ການປະຊຸມ
-                        </label>
-
-                        <input
-                            type="text"
-                            name="meeting_title"
-                            class="form-control"
-                            value="{{ old('meeting_title', $booking->meeting_title) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- วันที่ --}}
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            ວັນທີ
-                        </label>
-
-                        <input
-                            type="date"
-                            name="booking_date"
-                            class="form-control"
-                            value="{{ old('booking_date', $booking->booking_date) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- เวลาเริ่ม --}}
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            ເວລາເລີ່ມ
-                        </label>
-
-                        <input
-                            type="time"
-                            name="start_time"
-                            class="form-control"
-                            value="{{ old('start_time', substr($booking->start_time, 0, 5)) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- เวลาสิ้นสุด --}}
-                    <div class="col-md-4">
-
-                        <label class="form-label">
-                            ເວລາສິ້ນສຸດ
-                        </label>
-
-                        <input
-                            type="time"
-                            name="end_time"
-                            class="form-control"
-                            value="{{ old('end_time', substr($booking->end_time, 0, 5)) }}"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- จำนวนผู้เข้าร่วม --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ຈຳນວນຜູ້ເຂົ້າຮ່ວມ
-                        </label>
-
-                        <input
-                            type="number"
-                            name="attendees"
-                            class="form-control"
-                            value="{{ old('attendees', $booking->attendees) }}"
-                            min="1"
-                            required
-                        >
-
-                    </div>
-
-
-                    {{-- สถานะ --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ສະຖານະ
-                        </label>
-
-                        <select
-                            name="status"
-                            class="form-select"
-                            required
-                        >
-
-                            <option
-                                value="Pending"
-                                {{ old('status', $booking->status) == 'Pending' ? 'selected' : '' }}
-                            >
-                                Pending
-                            </option>
-
-                            <option
-                                value="Approved"
-                                {{ old('status', $booking->status) == 'Approved' ? 'selected' : '' }}
-                            >
-                                Approved
-                            </option>
-
-                            <option
-                                value="Rejected"
-                                {{ old('status', $booking->status) == 'Rejected' ? 'selected' : '' }}
-                            >
-                                Rejected
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    {{-- หมายเหตุ --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ໝາຍເຫດ
-                        </label>
-
-                        <input
-                            type="text"
-                            name="note"
-                            class="form-control"
-                            value="{{ old('note', $booking->note) }}"
-                            placeholder="ລາຍລະອຽດເພີ່ມເຕີມ"
-                        >
-
-                    </div>
-
-
-                    {{-- น้ำดื่ม --}}
-                    <div class="col-md-6">
-
-                        <label class="form-label">
-                            ນໍ້າດື່ມ
-                        </label>
-
-                        <input
-                            type="text"
-                            name="drinking_water"
-                            class="form-control"
-                            value="{{ old('drinking_water', $booking->drinking_water) }}"
-                            placeholder="ເຊັ່ນ 20 ຂວດ / 2 ແພັກ"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="mt-4">
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
-                        ບັນທຶກການແກ້ໄຂ
-                    </button>
-
-                    <a
-                        href="{{ route('bookings.index') }}"
-                        class="btn btn-secondary"
-                    >
-                        ຍົກເລີກ
-                    </a>
-
-                </div>
-
-            </form>
-
+@extends('layouts.app')
+
+@section('content')
+<div class="max-w-xl mx-auto bg-white rounded-lg shadow-sm p-6 mt-6">
+
+    <div class="flex justify-between items-start mb-4">
+        <div>
+            <h2 class="text-xl font-bold">Edit Booking</h2>
+            <p class="text-sm text-gray-500">แก้ไขรายละเอียดการจองของคุณ</p>
         </div>
-
+        <span class="text-xs px-2 py-1 rounded-full
+            {{ match($booking->status) {
+                'confirmed' => 'bg-green-50 text-green-700',
+                'pending' => 'bg-yellow-50 text-yellow-700',
+                'cancelled' => 'bg-red-50 text-red-600',
+                default => 'bg-gray-100 text-gray-600',
+            } }}">
+            {{ ucfirst($booking->status) }}
+        </span>
     </div>
 
+    @if ($errors->any())
+        <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="bg-red-50 rounded-lg p-3 flex justify-between items-center mb-4">
+        <div>
+            <p class="text-xs text-gray-500">Room</p>
+            <p class="font-semibold">{{ $booking->room->name }}</p>
+            <p class="text-xs text-gray-500">{{ $booking->room->location }}</p>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ route('bookings.update', $booking) }}" class="space-y-4">
+        @csrf
+        @method('PUT')
+
+        <div class="grid grid-cols-3 gap-3">
+            <div>
+                <label class="text-xs font-medium text-gray-600">Date</label>
+                <input type="date" name="date"
+                       value="{{ old('date', $booking->start_time->format('Y-m-d')) }}"
+                       class="w-full border rounded-lg p-2 text-sm" required>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-gray-600">Start Time</label>
+                <input type="time" name="start_time"
+                       value="{{ old('start_time', $booking->start_time->format('H:i')) }}"
+                       class="w-full border rounded-lg p-2 text-sm" required>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-gray-600">End Time</label>
+                <input type="time" name="end_time"
+                       value="{{ old('end_time', $booking->end_time->format('H:i')) }}"
+                       class="w-full border rounded-lg p-2 text-sm" required>
+            </div>
+        </div>
+
+        <div>
+            <label class="text-xs font-medium text-gray-600">Meeting Title</label>
+            <input type="text" name="title" value="{{ old('title', $booking->title) }}"
+                   class="w-full border rounded-lg p-2 text-sm" required>
+        </div>
+
+        <div>
+            <label class="text-xs font-medium text-gray-600">Description (Optional)</label>
+            <textarea name="description" rows="3"
+                      class="w-full border rounded-lg p-2 text-sm">{{ old('description', $booking->description) }}</textarea>
+        </div>
+
+        <div>
+            <label class="text-xs font-medium text-gray-600">จำนวนผู้เข้าร่วมประชุม</label>
+            <div class="flex items-center gap-3 mt-1">
+                <button type="button" onclick="changeAttendees(-1)"
+                        class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">−</button>
+
+                <input type="number" id="attendee-count" name="attendees"
+                       value="{{ old('attendees', $booking->attendees ?? 1) }}" min="1" max="{{ $booking->room->capacity }}"
+                       class="w-20 text-center border rounded-lg p-2 text-sm font-semibold" required readonly>
+
+                <button type="button" onclick="changeAttendees(1)"
+                        class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">+</button>
+
+                <span class="text-xs text-gray-400">สูงสุด {{ $booking->room->capacity }} คน (ความจุห้อง)</span>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t">
+            <a href="{{ route('bookings.index') }}" class="border rounded-lg px-4 py-2 text-sm">Cancel</a>
+            <button type="submit" class="bg-red-700 text-white rounded-lg px-4 py-2 text-sm">Save Changes</button>
+        </div>
+    </form>
 </div>
 
-</body>
+<script>
+    const maxCapacity = {{ $booking->room->capacity }};
 
-</html>
+    function changeAttendees(delta) {
+        const input = document.getElementById('attendee-count');
+        let value = parseInt(input.value || '1', 10) + delta;
+        if (value < 1) value = 1;
+        if (value > maxCapacity) value = maxCapacity;
+        input.value = value;
+    }
+</script>
+@endsection
