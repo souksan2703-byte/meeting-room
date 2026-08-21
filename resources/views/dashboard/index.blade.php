@@ -43,7 +43,7 @@
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <div class="min-w-[900px]">
+        <div class="min-w-225px">
             <div class="grid border-b" style="grid-template-columns: 220px repeat({{ count($hours) - 1 }}, 1fr);">
                 <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
                 @foreach ($hours as $hour)
@@ -116,7 +116,7 @@
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <div class="min-w-[1000px]">
+        <div class="min-w-250px">
             <div class="grid border-b" style="grid-template-columns: 180px repeat(7, 1fr);">
                 <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
                 @foreach ($weekDays as $day)
@@ -192,7 +192,7 @@
                         $dayUrl = route('dashboard', ['view' => 'day', 'date' => $day->format('Y-m-d')]);
                     @endphp
                     <div onclick="window.location.href='{{ $dayUrl }}'"
-                         class="border-l p-2 min-h-[100px] cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-300' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
+                         class="border-l p-2 min-h-25px cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-300' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
                         <p class="text-xs font-medium mb-1 {{ $day->isToday() ? 'text-red-700 font-bold' : '' }}">{{ $day->format('j') }}</p>
                         @foreach ($dayBookings->take(3) as $booking)
                             <button type="button"
@@ -221,7 +221,7 @@
 @endif
 
 {{-- ============== BOOKING DETAIL MODAL ============== --}}
-<div id="booking-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeBookingModal()">
+<div id="booking-modal" class="hidden fixed inset-0 bg-black/40 z-50 items-center justify-center p-4" onclick="if(event.target===this) closeBookingModal()">
     <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
         <button type="button" onclick="closeBookingModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
 
