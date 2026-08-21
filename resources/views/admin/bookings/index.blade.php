@@ -64,6 +64,7 @@
         </form>
     </div>
 
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-left">
             <tr>
@@ -122,6 +123,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="flex items-center justify-between p-4 border-t text-sm text-gray-500">
         <span>Showing {{ $bookings->firstItem() ?? 0 }} to {{ $bookings->lastItem() ?? 0 }} of {{ $bookings->total() }} entries</span>

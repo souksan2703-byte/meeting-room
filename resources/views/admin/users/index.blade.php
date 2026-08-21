@@ -6,6 +6,9 @@
         <h1 class="text-3xl font-bold">Users</h1>
         <p class="text-gray-500">จัดการผู้ใช้งานและสิทธิ์การเข้าถึงระบบ ({{ $totalAdmins }} Admin ทั้งหมด)</p>
     </div>
+    <a href="{{ route('admin.users.create') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        + Add New User
+    </a>
 </div>
 
 @if (session('success'))
@@ -31,6 +34,7 @@
         </form>
     </div>
 
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-left">
             <tr>
@@ -85,6 +89,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="flex items-center justify-between p-4 border-t text-sm text-gray-500">
         <span>Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} entries</span>

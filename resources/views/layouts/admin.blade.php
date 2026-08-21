@@ -6,10 +6,16 @@
     <title>@yield('title', 'RoomReserve Admin')</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 min-h-screen flex">
+<body class="bg-gray-50 min-h-screen">
 
-    {{-- Sidebar --}}
-    <aside class="w-64 shrink-0 bg-white border-r border-gray-200 flex flex-col justify-between fixed inset-y-0 left-0">
+    {{-- Mobile overlay (คลิกเพื่อปิด sidebar) --}}
+    <div id="sidebar-overlay" onclick="toggleSidebar()"
+         class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"></div>
+
+    {{-- Sidebar — off-canvas บนมือถือ, fixed ตลอดบนจอใหญ่ --}}
+    <aside id="admin-sidebar"
+           class="w-64 shrink-0 bg-white border-r border-gray-200 flex flex-col justify-between fixed inset-y-0 left-0 z-50
+                  transform -translate-x-full md:translate-x-0 transition-transform duration-200">
         <div>
             <div class="p-5 flex items-center gap-3 border-b border-gray-100">
                 <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center font-semibold shrink-0">
@@ -19,6 +25,7 @@
                     <p class="font-bold text-red-700 leading-tight truncate">RoomReserve</p>
                     <p class="text-xs text-gray-400">Enterprise Admin</p>
                 </div>
+                <button type="button" onclick="toggleSidebar()" class="md:hidden ml-auto text-gray-400 text-xl leading-none">✕</button>
             </div>
 
             <div class="p-4">
@@ -41,9 +48,10 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'bg-red-50 text-red-700' : 'text-gray-500 hover:bg-gray-50' }}">
                     👥 Users
                 </a>
-                <span class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 cursor-not-allowed" title="ยังไม่พร้อมใช้งาน">
+                <a href="{{ route('admin.reports.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.reports.*') ? 'bg-red-50 text-red-700' : 'text-gray-500 hover:bg-gray-50' }}">
                     📊 Reports
-                </span>
+                </a>
             </nav>
         </div>
 
@@ -51,16 +59,15 @@
             <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50">
                 ⚙️ Back to Dashboard
             </a>
-            <span class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 cursor-not-allowed" title="ยังไม่พร้อมใช้งาน">
-                ❓ Support
-            </span>
         </div>
     </aside>
 
     {{-- Main --}}
-    <div class="flex-1 ml-64">
+    <div class="md:ml-64">
         {{-- Top bar --}}
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-end px-6 sticky top-0 z-40">
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between md:justify-end px-4 md:px-6 sticky top-0 z-30">
+            <button type="button" onclick="toggleSidebar()" class="md:hidden text-gray-500 text-2xl leading-none">☰</button>
+
             <div class="flex items-center gap-4 shrink-0">
                 <a href="{{ route('notifications.index') }}" title="Notifications" class="relative text-gray-400 hover:text-red-700">
                     🔔
@@ -79,10 +86,17 @@
             </div>
         </header>
 
-        <main class="p-6">
+        <main class="p-4 md:p-6">
             @yield('content')
         </main>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('admin-sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        }
+    </script>
 
 </body>
 </html>

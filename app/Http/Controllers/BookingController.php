@@ -136,11 +136,28 @@ class BookingController extends Controller
                 ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $booking->room->capacity . ' คน)']);
         }
 
+        $newStart = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
+        $newEnd = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
+
+        // เช็คว่าเวลาที่แก้ไขใหม่ไปทับกับ booking อื่นในห้องเดียวกันหรือไม่ (ไม่นับตัวเองและที่ยกเลิกไปแล้ว)
+        $overlaps = $booking->room->bookings()
+            ->where('id', '!=', $booking->id)
+            ->where('status', '!=', 'cancelled')
+            ->where('start_time', '<', $newEnd)
+            ->where('end_time', '>', $newStart)
+            ->exists();
+
+        if ($overlaps) {
+            return back()
+                ->withInput()
+                ->withErrors(['start_time' => 'ห้องนี้ถูกจองในช่วงเวลาดังกล่าวไปแล้ว']);
+        }
+
         $booking->update([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
-            'start_time' => Carbon::parse($validated['date'] . ' ' . $validated['start_time']),
-            'end_time' => Carbon::parse($validated['date'] . ' ' . $validated['end_time']),
+            'start_time' => $newStart,
+            'end_time' => $newEnd,
             'attendees' => $validated['attendees'],
         ]);
 
