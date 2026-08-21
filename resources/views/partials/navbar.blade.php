@@ -7,27 +7,27 @@
                 RoomReserve
             </a>
 
-            <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium ">
                 <a href="{{ route('dashboard') }}"
-                   class="pb-1 border-b-2 {{ request()->routeIs('dashboard') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
+                   class="pb-1 border-b-2 transition-transform hover:scale-110 {{ request()->routeIs('dashboard') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
                     Dashboard
                 </a>
                 <a href="{{ route('rooms.index') }}"
-                   class="pb-1 border-b-2 {{ request()->routeIs('rooms.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
+                   class="pb-1 border-b-2 transition-transform hover:scale-110 {{ request()->routeIs('rooms.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
                     Rooms
                 </a>
                 <a href="{{ route('bookings.index') }}"
-                   class="pb-1 border-b-2 {{ request()->routeIs('bookings.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
+                   class="pb-1 border-b-2 transition-transform hover:scale-110 {{ request()->routeIs('bookings.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
                     My Bookings
                 </a>
                 @auth
                     <a href="{{ route('profile.edit') }}"
-                       class="pb-1 border-b-2 {{ request()->routeIs('profile.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
+                       class="pb-1 border-b-2 transition-transform hover:scale-110 {{ request()->routeIs('profile.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
                         Profile
                     </a>
                     @if (auth()->user()->role === 'admin')
                         <a href="{{ route('admin.bookings.index') }}"
-                           class="pb-1 border-b-2 {{ request()->routeIs('admin.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
+                           class="pb-1 border-b-2 transition-transform hover:scale-110 {{ request()->routeIs('admin.*') ? 'border-red-700 text-red-700' : 'border-transparent text-gray-500 hover:text-red-700' }}">
                             Approvals
                         </a>
                     @endif

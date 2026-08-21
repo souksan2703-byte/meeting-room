@@ -79,7 +79,7 @@
         <tbody>
             @forelse ($bookings as $booking)
                 <tr class="border-t">
-                    <td class="p-3 font-medium">🏢 {{ $booking->room->name }}</td>
+                    <td class="p-3 font-medium ">🏢 {{ $booking->room->name }}</td>
                     <td class="p-3 text-gray-600">{{ $booking->user->name }}</td>
                     <td class="p-3 text-gray-600">{{ $booking->title }}</td>
                     <td class="p-3 text-gray-600">
