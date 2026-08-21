@@ -1,11 +1,1 @@
 @import "tailwindcss";
-
-.nav-link {
-    transition: 0.3s;
-}
-
-.nav-link:hover {
-    background: #C62828;
-    color: #fff;
-    border-radius: 8px;
-}

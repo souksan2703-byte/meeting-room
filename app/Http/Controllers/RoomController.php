@@ -2,32 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Room;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = Room::all();
+        $rooms = Room::orderBy('floor')->orderBy('name')->get();
 
         return view('rooms.index', compact('rooms'));
     }
 
-    public function create(){}
+    public function show(Request $request, Room $room)
+    {
+        $date = $request->input('date', now()->format('Y-m-d'));
+        $selectedDate = Carbon::parse($date);
 
+        $bookings = $room->bookingsForDate($date);
 
-    public function store(Request $request){}
+        // Build 30-min slots between 09:00 and 13:30 (mirrors the mock; adjust as needed)
+        $slots = [];
+        $slotStart = Carbon::parse($date)->setTime(9, 0);
+        $slotEnd = Carbon::parse($date)->setTime(13, 30);
 
+        while ($slotStart->lte($slotEnd)) {
+            $slotFinish = $slotStart->copy()->addMinutes(30);
 
-    public function show(string $id){}
+            $isBooked = $bookings->contains(function ($booking) use ($slotStart, $slotFinish) {
+                return $slotStart->lt($booking->end_time) && $slotFinish->gt($booking->start_time);
+            });
 
+            $slots[] = [
+                'time' => $slotStart->format('h:i A'),
+                'value' => $slotStart->format('H:i'),
+                'available' => !$isBooked,
+            ];
 
-    public function edit(string $id){}
+            $slotStart->addMinutes(30);
+        }
 
+        $isAvailableNow = !$bookings->contains(function ($booking) {
+            return now()->between($booking->start_time, $booking->end_time);
+        });
 
-    public function update(Request $request, string $id){}
-
-
-    public function destroy(string $id){}
+        return view('rooms.show', [
+            'room' => $room,
+            'slots' => $slots,
+            'selectedDate' => $selectedDate,
+            'isAvailableNow' => $isAvailableNow,
+        ]);
+    }
 }
