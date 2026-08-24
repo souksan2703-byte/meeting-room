@@ -13,10 +13,16 @@
 
 {{-- View switcher: Day / Week / Month --}}
 <div class="flex items-center justify-between mb-4">
-    <div class="flex gap-2">
-        @foreach (['day' => 'Day', 'week' => 'Week', 'month' => 'Month'] as $key => $label)
+    <div class="relative flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+        @php $tabs = ['day' => 'Day', 'week' => 'Week', 'month' => 'Month']; $tabKeys = array_keys($tabs); $activeIndex = array_search($view, $tabKeys); @endphp
+        {{-- แถบพื้นหลังสีแดงที่เลื่อนไปมาตาม tab ที่เลือก --}}
+        <div class="absolute top-1 bottom-1 left-1 rounded-lg bg-red-700 shadow-sm transition-transform duration-300 ease-out"
+             style="width: calc((100% - 0.5rem) / 3); transform: translateX(calc({{ $activeIndex }} * 100%));"></div>
+
+        @foreach ($tabs as $key => $label)
             <a href="{{ route('dashboard', ['view' => $key, 'date' => $selectedDate]) }}"
-               class="px-4 py-2 rounded-lg text-sm font-medium {{ $view === $key ? 'bg-red-700 text-white' : 'bg-white border text-gray-600' }}">
+               class="relative z-10 px-4 py-2 rounded-lg text-sm font-medium w-24 text-center transition-colors duration-200
+                      {{ $view === $key ? 'text-white' : 'text-gray-600 hover:text-red-700' }}">
                 {{ $label }}
             </a>
         @endforeach
@@ -25,12 +31,13 @@
     <div class="flex items-center gap-4 text-sm text-gray-500">
         <span><span class="inline-block w-2 h-2 rounded-full bg-gray-300 mr-1"></span>Available</span>
         <span><span class="inline-block w-2 h-2 rounded-full bg-red-700 mr-1"></span>Confirmed</span>
-        <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>Pending</span>
+        <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1 animate-pulse"></span>Pending</span>
     </div>
 </div>
 
 {{-- ============== DAY VIEW ============== --}}
 @if ($view === 'day')
+    <div class="animate-fade-in">
     <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
         <input type="hidden" name="view" value="day">
         <a href="{{ route('dashboard', ['view' => 'day', 'date' => \Carbon\Carbon::parse($selectedDate)->subDay()->format('Y-m-d')]) }}"
@@ -43,7 +50,7 @@
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <div class="min-w-225px">
+        <div class="min-w-[900px]">
             <div class="grid border-b" style="grid-template-columns: 220px repeat({{ count($hours) - 1 }}, 1fr);">
                 <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
                 @foreach ($hours as $hour)
@@ -85,8 +92,8 @@
                                data-time="{{ $booking->start_time->format('g:i A') }} - {{ $booking->end_time->format('g:i A') }}"
                                data-attendees="{{ $booking->attendeesCount() }}"
                                data-description="{{ $booking->description }}"
-                               class="absolute top-2 bottom-2 rounded-md px-3 py-2 text-white text-xs text-left cursor-pointer
-                                      {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-red-700' }}"
+                               class="absolute top-2 bottom-2 rounded-md px-3 py-2 text-white text-xs text-left cursor-pointer transition-all duration-150 hover:scale-[1.03] hover:shadow-md hover:z-20
+                                      {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200 animate-pulse' : 'bg-red-700' }}"
                                style="left: {{ $booking->position['left'] }}%; width: {{ $booking->position['width'] }}%;">
                                 <p class="font-semibold uppercase tracking-wide truncate">
                                     @if ($booking->status === 'pending') &#9200; PENDING @else {{ $booking->title }} @endif
@@ -99,10 +106,12 @@
             @endforeach
         </div>
     </div>
+    </div>
 @endif
 
 {{-- ============== WEEK VIEW ============== --}}
 @if ($view === 'week')
+    <div class="animate-fade-in">
     <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
         <input type="hidden" name="view" value="week">
         <a href="{{ route('dashboard', ['view' => 'week', 'date' => $weekStart->copy()->subWeek()->format('Y-m-d')]) }}"
@@ -116,7 +125,7 @@
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <div class="min-w-250px">
+        <div class="min-w-[1000px]">
             <div class="grid border-b" style="grid-template-columns: 180px repeat(7, 1fr);">
                 <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
                 @foreach ($weekDays as $day)
@@ -160,10 +169,12 @@
             @endforeach
         </div>
     </div>
+    </div>
 @endif
 
 {{-- ============== MONTH VIEW ============== --}}
 @if ($view === 'month')
+    <div class="animate-fade-in">
     <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
         <input type="hidden" name="view" value="month">
         <a href="{{ route('dashboard', ['view' => 'month', 'date' => $monthCursor->copy()->subMonth()->format('Y-m-d')]) }}"
@@ -192,7 +203,7 @@
                         $dayUrl = route('dashboard', ['view' => 'day', 'date' => $day->format('Y-m-d')]);
                     @endphp
                     <div onclick="window.location.href='{{ $dayUrl }}'"
-                         class="border-l p-2 min-h-25px cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-300' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
+                         class="border-l p-2 min-h-[100px] cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-300' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
                         <p class="text-xs font-medium mb-1 {{ $day->isToday() ? 'text-red-700 font-bold' : '' }}">{{ $day->format('j') }}</p>
                         @foreach ($dayBookings->take(3) as $booking)
                             <button type="button"
@@ -218,11 +229,12 @@
             </div>
         @endforeach
     </div>
+    </div>
 @endif
 
 {{-- ============== BOOKING DETAIL MODAL ============== --}}
-<div id="booking-modal" class="hidden fixed inset-0 bg-black/40 z-50 items-center justify-center p-4" onclick="if(event.target===this) closeBookingModal()">
-    <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative">
+<div id="booking-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeBookingModal()">
+    <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative max-h-[85vh] overflow-y-auto">
         <button type="button" onclick="closeBookingModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
 
         <span id="modal-status" class="text-xs px-2 py-1 rounded-full font-medium inline-block mb-3"></span>
@@ -247,6 +259,24 @@
         </a>
     </div>
 </div>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalPop {
+        from { opacity: 0; transform: scale(0.95) translateY(8px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    #booking-modal.show-modal > div {
+        animation: modalPop 0.2s ease-out;
+    }
+</style>
 
 <script>
     function openBookingModal(btn) {
@@ -277,11 +307,15 @@
             descWrap.classList.add('hidden');
         }
 
-        document.getElementById('booking-modal').classList.remove('hidden');
+        const modal = document.getElementById('booking-modal');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.add('show-modal'));
     }
 
     function closeBookingModal() {
-        document.getElementById('booking-modal').classList.add('hidden');
+        const modal = document.getElementById('booking-modal');
+        modal.classList.remove('show-modal');
+        modal.classList.add('hidden');
     }
 
     document.addEventListener('keydown', function (e) {
