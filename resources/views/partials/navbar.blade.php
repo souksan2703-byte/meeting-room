@@ -3,31 +3,26 @@
 
         {{-- Logo + Nav links --}}
         <div class="flex items-center gap-4 md:gap-10 shrink-0">
-            <a href="{{ route('dashboard') }}" class="text-lg md:text-xl font-bold text-red-700 whitespace-nowrap transition-transform duration-150 hover:scale-105 inline-block">
             <a href="{{ route('dashboard') }}"
                 class="text-lg md:text-xl font-bold text-red-700 whitespace-nowrap transition-transform duration-150 hover:scale-105 inline-block">
                 RoomReserve
             </a>
 
             <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}">
                 <a href="{{ route('dashboard') }}"
                     class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}">
                     Dashboard
                 </a>
-                <a href="{{ route('rooms.index') }}" class="nav-link {{ request()->routeIs('rooms.*') ? 'nav-link-active' : '' }}">
                 <a href="{{ route('rooms.index') }}"
                     class="nav-link {{ request()->routeIs('rooms.*') ? 'nav-link-active' : '' }}">
                     Rooms
                 </a>
-                <a href="{{ route('bookings.index') }}" class="nav-link {{ request()->routeIs('bookings.*') ? 'nav-link-active' : '' }}">
                 <a href="{{ route('bookings.index') }}"
                     class="nav-link {{ request()->routeIs('bookings.*') ? 'nav-link-active' : '' }}">
                     My Bookings
                 </a>
                 @auth
                     @if (auth()->user()->role === 'admin')
-                        <a href="{{ route('admin.bookings.index') }}" class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">
                         <a href="{{ route('admin.bookings.index') }}"
                             class="nav-link {{ request()->routeIs('admin.*') ? 'nav-link-active' : '' }}">
                             Approvals
@@ -40,11 +35,9 @@
         {{-- Right side: icons + profile + logout --}}
         <div class="flex items-center gap-2 md:gap-4 shrink-0">
             <a href="{{ route('notifications.index') }}" title="Notifications"
-               class="relative text-gray-400 hover:text-red-700 transition-transform duration-150 hover:scale-110 active:scale-95">
                 class="relative text-gray-400 hover:text-red-700 transition-transform duration-150 hover:scale-110 active:scale-95">
                 🔔
                 @if (auth()->check() && auth()->user()->unreadNotificationsCount() > 0)
-                    <span class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
                     <span
                         class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
                         {{ auth()->user()->unreadNotificationsCount() > 9 ? '9+' : auth()->user()->unreadNotificationsCount() }}
@@ -52,12 +45,10 @@
                 @endif
             </a>
 
-            
 
             @auth
                 <form method="POST" action="{{ route('logout') }}" class="hidden md:block">
                     @csrf
-                    <button type="submit" class="text-sm border rounded-lg px-3 py-1.5 text-gray-600 hover:bg-gray-50 transition-all duration-150 active:scale-95">
                     <button type="submit"
                         class="text-sm border rounded-lg px-3 py-1.5 text-gray-600 hover:bg-gray-50 transition-all duration-150 active:scale-95">
                         Logout
@@ -65,7 +56,6 @@
                 </form>
 
                 <a href="{{ route('profile.edit') }}" title="Profile"
-                   class="w-9 h-9 rounded-full bg-red-700 text-white flex items-center justify-center text-sm font-semibold shrink-0 transition-transform duration-150 hover:scale-110
                     class="w-9 h-9 rounded-full bg-red-700 text-white flex items-center justify-center text-sm font-semibold shrink-0 transition-transform duration-150 hover:scale-110
                           {{ request()->routeIs('profile.*') ? 'ring-2 ring-offset-2 ring-red-700' : '' }}">
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -73,7 +63,6 @@
 
                 {{-- Hamburger — เฉพาะจอมือถือ --}}
                 <button type="button" onclick="toggleMobileMenu()" id="hamburger-btn"
-                        class="md:hidden text-gray-500 text-2xl leading-none px-1 transition-transform duration-200">
                     class="md:hidden text-gray-500 text-2xl leading-none px-1 transition-transform duration-200">
                     ☰
                 </button>
@@ -86,13 +75,9 @@
 
     {{-- Mobile dropdown menu — เลื่อนลงแบบนุ่มนวล --}}
     @auth
-        <div id="mobile-menu" class="md:hidden bg-white border-b border-gray-200 px-4 overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
         <div id="mobile-menu"
             class="md:hidden bg-white border-b border-gray-200 px-4 overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
             <div class="py-3 space-y-1">
-                <a href="{{ route('dashboard') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('dashboard') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ໜ້າຫຼັກ</a>
-                <a href="{{ route('rooms.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('rooms.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ຫ້ອງປະຊຸມ</a>
-                <a href="{{ route('bookings.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('bookings.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ການຈອງຂອງຂ້ອຍ</a>
                 <a href="{{ route('dashboard') }}"
                     class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('dashboard') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ໜ້າຫຼັກ</a>
                 <a href="{{ route('rooms.index') }}"
@@ -100,7 +85,6 @@
                 <a href="{{ route('bookings.index') }}"
                     class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('bookings.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ການຈອງຂອງຂ້ອຍ</a>
                 @if (auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.bookings.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('admin.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ອະນຸມັດການຈອງ</a>
                     <a href="{{ route('admin.bookings.index') }}"
                         class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('admin.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ອະນຸມັດການຈອງ</a>
                 @endif
@@ -158,8 +142,6 @@
     }
 
     @keyframes pageFadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to { opacity: 1; transform: translateY(0); }
         from {
             opacity: 0;
             transform: translateY(6px);
@@ -176,8 +158,6 @@
     }
 
     @keyframes pageFadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
         from {
             opacity: 1;
         }
@@ -249,7 +229,6 @@
         document.body.classList.add('page-leaving'); // เริ่ม fade-out หน้าเดิม (แต่ยังอยู่บนจอ ไม่ใช่จอขาว)
 
         try {
-            const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
             const res = await fetch(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -270,7 +249,6 @@
 
             document.title = newDoc.title;
             document.body.innerHTML = newDoc.body.innerHTML;
-            window.history.pushState({ ajax: true }, '', url);
             window.history.pushState({
                 ajax: true
             }, '', url);
@@ -285,7 +263,6 @@
         }
     }
 
-    document.addEventListener('click', function (e) {
     document.addEventListener('click', function(e) {
         const link = e.target.closest('a[href]');
         if (!link) return;
@@ -304,7 +281,6 @@
     });
 
     // กด back/forward ของเบราว์เซอร์ -> โหลดใหม่แบบปกติ (ปลอดภัยสุด กันสถานะหน้าเพี้ยน)
-    window.addEventListener('popstate', function (e) {
     window.addEventListener('popstate', function(e) {
         if (e.state && e.state.ajax) {
             window.location.reload();
@@ -312,7 +288,6 @@
     });
 
     // ดักการ submit ฟอร์ม (จองห้อง, login, filter) ให้ fade-out ก่อนเช่นกัน — ฟอร์มยัง submit แบบปกติ
-    document.addEventListener('submit', function () {
     document.addEventListener('submit', function() {
         document.getElementById('top-loader').classList.add('loading');
         document.body.classList.add('page-leaving');
@@ -333,5 +308,4 @@
             btn.style.transform = 'rotate(90deg)';
         }
     }
-</script></script>
 </script>
