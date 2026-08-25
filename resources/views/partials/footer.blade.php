@@ -2,7 +2,7 @@
     <div class="container-fluid text-center">
 
         <small class="text-muted">
-            © {{ date('Y') }} Office Meeting Room Booking System
+            © {{ date('Y') }} ລະບົບຈອງຫ້ອງປະຊຸມສຳນັກງານ
             | Developed with Laravel 12
         </small>
 

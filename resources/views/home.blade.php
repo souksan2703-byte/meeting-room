@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Meeting Room Booking</title>
+    <title>ລະບົບຈອງຫ້ອງປະຊຸມ</title>
 </head>
 <body>
 

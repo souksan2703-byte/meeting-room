@@ -4,21 +4,21 @@
 <div class="max-w-2xl mx-auto space-y-6">
 
     <div>
-        <h1 class="text-3xl font-bold">Profile</h1>
-        <p class="text-gray-500">จัดการข้อมูลบัญชีและความปลอดภัยของคุณ</p>
+        <h1 class="text-3xl font-bold">ໂປຣໄຟລ໌</h1>
+        <p class="text-gray-500">ຈັດການຂໍ້ມູນບັນຊີຂອງທ່ານ ແລະ ຄວາມປອດໄພ</p>
     </div>
 
     @if (session('status') === 'profile-updated')
-        <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3">บันทึกข้อมูลเรียบร้อยแล้ว</div>
+        <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3">ບັນທຶກຂໍ້ມູນສຳເລັດແລ້ວ</div>
     @endif
     @if (session('status') === 'password-updated')
-        <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3">เปลี่ยนรหัสผ่านเรียบร้อยแล้ว</div>
+        <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3">ປ່ຽນລະຫັດຜ່ານສຳເລັດແລ້ວ</div>
     @endif
 
     {{-- Profile Information --}}
     <div class="bg-white rounded-lg shadow-sm p-6">
-        <h2 class="font-bold text-lg mb-1">Profile Information</h2>
-        <p class="text-sm text-gray-500 mb-4">แก้ไขชื่อและอีเมลของบัญชี</p>
+        <h2 class="font-bold text-lg mb-1">ຂໍ້ມູນໂປຣໄຟລ໌</h2>
+        <p class="text-sm text-gray-500 mb-4">ແກ້ໄຂຊື່ບັນຊີ ແລະ ທີ່ຢູ່ອີເມວ</p>
 
         @if ($errors->any())
             <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4">
@@ -35,13 +35,13 @@
             @method('PATCH')
 
             <div>
-                <label class="text-xs font-medium text-gray-600">Name</label>
+                <label class="text-xs font-medium text-gray-600">ຊື່</label>
                 <input type="text" name="name" value="{{ old('name', auth()->user()->name) }}"
                        class="w-full border rounded-lg p-2 text-sm" required>
             </div>
 
             <div>
-                <label class="text-xs font-medium text-gray-600">Email</label>
+                <label class="text-xs font-medium text-gray-600">ອີເມວ</label>
                 <input type="email" name="email" value="{{ old('email', auth()->user()->email) }}"
                        class="w-full border rounded-lg p-2 text-sm" required>
             </div>
@@ -56,25 +56,25 @@
 
     {{-- Update Password --}}
     <div class="bg-white rounded-lg shadow-sm p-6">
-        <h2 class="font-bold text-lg mb-1">Update Password</h2>
-        <p class="text-sm text-gray-500 mb-4">ใช้รหัสผ่านที่ยาวและคาดเดายากเพื่อความปลอดภัย</p>
+        <h2 class="font-bold text-lg mb-1">ປ່ຽນລະຫັດຜ່ານ</h2>
+        <p class="text-sm text-gray-500 mb-4">ໃຊ້ລະຫັດຜ່ານທີ່ຍາວ ແລະ ຄາດເດົາຍາກເພື່ອຄວາມປອດໄພ.</p>
 
         <form method="POST" action="{{ route('password.update') }}" class="space-y-4">
             @csrf
             @method('PUT')
 
             <div>
-                <label class="text-xs font-medium text-gray-600">Current Password</label>
+                <label class="text-xs font-medium text-gray-600">ລະຫັດຜ່ານປັດຈຸບັນ</label>
                 <input type="password" name="current_password" class="w-full border rounded-lg p-2 text-sm">
             </div>
 
             <div>
-                <label class="text-xs font-medium text-gray-600">New Password</label>
+                <label class="text-xs font-medium text-gray-600">ລະຫັດຜ່ານໃໝ່</label>
                 <input type="password" name="password" class="w-full border rounded-lg p-2 text-sm">
             </div>
 
             <div>
-                <label class="text-xs font-medium text-gray-600">Confirm New Password</label>
+                <label class="text-xs font-medium text-gray-600">ຢືນຢັນລະຫັດຜ່ານໃໝ່</label>
                 <input type="password" name="password_confirmation" class="w-full border rounded-lg p-2 text-sm">
             </div>
 
@@ -88,8 +88,8 @@
 
     {{-- Delete Account --}}
     <div class="bg-white rounded-lg shadow-sm p-6 border border-red-100">
-        <h2 class="font-bold text-lg mb-1 text-red-700">Delete Account</h2>
-        <p class="text-sm text-gray-500 mb-4">ลบบัญชีถาวร ข้อมูลการจองทั้งหมดของคุณจะถูกลบไปด้วย ทำแล้วกู้คืนไม่ได้</p>
+        <h2 class="font-bold text-lg mb-1 text-red-700">ລຶບບັນຊີ</h2>
+        <p class="text-sm text-gray-500 mb-4">ການລຶບບັນຊີຂອງທ່ານຢ່າງຖາວອນຈະເປັນການລຶບຂໍ້ມູນການຈອງທັງໝົດຂອງທ່ານແລະບໍ່ສາມາດກູ້ຄືນໄດ້</p>
 
         <form method="POST" action="{{ route('profile.destroy') }}"
               onsubmit="return confirm('ยืนยันลบบัญชีถาวร? ไม่สามารถกู้คืนได้')" class="space-y-4">
@@ -97,7 +97,7 @@
             @method('DELETE')
 
             <div>
-                <label class="text-xs font-medium text-gray-600">Password (ยืนยันตัวตนก่อนลบ)</label>
+                <label class="text-xs font-medium text-gray-600">ລະຫັດຜ່ານ (ຢືນຢັນຕົວຕົນກ່ອນລຶບ)</label>
                 <input type="password" name="password" class="w-full border rounded-lg p-2 text-sm">
             </div>
 

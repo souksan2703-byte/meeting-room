@@ -4,7 +4,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h1 class="text-3xl font-bold">Overview</h1>
-        <p class="text-gray-500">Manage corporate space utilization and bookings.</p>
+        <p class="text-gray-500">ຈັດການການໃຊ້ພື້ນທີ່ ແລະການຈອງຫ້ອງຂອງອົງກອນ.</p>
     </div>
 </div>
 
@@ -16,16 +16,16 @@
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-lg shadow-sm p-4">
         <div class="flex items-center justify-between mb-2">
-            <p class="text-xs font-semibold text-gray-400 tracking-wide">TOTAL ROOMS</p>
+            <p class="text-xs font-semibold text-gray-400 tracking-wide">ຈຳນວນຫ້ອງທັງໝົດ</p>
             <span class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-600">🏢</span>
         </div>
         <p class="text-3xl font-bold">{{ $stats['totalRooms'] }}</p>
-        <p class="text-xs text-gray-400 mt-1">All online</p>
+        <p class="text-xs text-gray-400 mt-1">ອອນລາຍທັງໝົດ</p>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm p-4">
         <div class="flex items-center justify-between mb-2">
-            <p class="text-xs font-semibold text-gray-400 tracking-wide">BOOKINGS TODAY</p>
+            <p class="text-xs font-semibold text-gray-400 tracking-wide">ການຈອງມື້ນີ້</p>
             <span class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-600">📅</span>
         </div>
         <p class="text-3xl font-bold">{{ $stats['bookingsToday'] }}</p>
@@ -36,29 +36,29 @@
 
     <div class="bg-white rounded-lg shadow-sm p-4">
         <div class="flex items-center justify-between mb-2">
-            <p class="text-xs font-semibold text-gray-400 tracking-wide">ACTIVE USERS</p>
+            <p class="text-xs font-semibold text-gray-400 tracking-wide">ຜູ້ໃຊ້ທີ່ໃຊ້ງານ</p>
             <span class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-600">👥</span>
         </div>
         <p class="text-3xl font-bold">{{ $stats['activeUsers'] }}</p>
-        <p class="text-xs text-gray-400 mt-1">Total registered</p>
+        <p class="text-xs text-gray-400 mt-1">ລົງທະບຽນທັງໝົດ</p>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm p-4">
         <div class="flex items-center justify-between mb-2">
-            <p class="text-xs font-semibold text-gray-400 tracking-wide">ATTENDEES TODAY</p>
+            <p class="text-xs font-semibold text-gray-400 tracking-wide">ຜູ້ເຂົ້າຮ່ວມມື້ນີ້</p>
             <span class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-600">👥</span>
         </div>
         <p class="text-3xl font-bold">{{ $stats['totalAttendeesToday'] }}</p>
-        <p class="text-xs text-gray-400 mt-1">คน (รวมทุกห้องวันนี้)</p>
+        <p class="text-xs text-gray-400 mt-1">ຄົນ (ລວມທຸກຫ້ອງມື້ນີ້)</p>
     </div>
 </div>
 
-{{-- All Bookings table --}}
+{{-- ການຈອງທັງໝົດ table --}}
 <div class="bg-white rounded-lg shadow-sm">
     <div class="flex items-center justify-between p-4 border-b">
-        <h2 class="text-lg font-bold">All Bookings</h2>
+        <h2 class="text-lg font-bold">ການຈອງທັງໝົດ</h2>
         <form method="GET" action="{{ route('admin.bookings.index') }}">
-            <input type="text" name="q" value="{{ $search }}" placeholder="Filter by room, user..."
+            <input type="text" name="q" value="{{ $search }}" placeholder="ກັ່ນຕອງຕາມຫ້ອງ ຫຼື ຜູ້ໃຊ້..."
                    onchange="this.form.submit()"
                    class="border rounded-lg px-4 py-2 text-sm w-64">
         </form>
@@ -68,11 +68,11 @@
     <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-left">
             <tr>
-                <th class="p-3">ROOM NAME</th>
-                <th class="p-3">USER</th>
-                <th class="p-3">MEETING TITLE</th>
-                <th class="p-3">DATE &amp; TIME</th>
-                <th class="p-3">STATUS</th>
+                <th class="p-3">ຊື່ຫ້ອງ</th>
+                <th class="p-3">ຜູ້ໃຊ້</th>
+                <th class="p-3">ຫົວຂໍ້ການປະຊຸມ</th>
+                <th class="p-3">ວັນທີ ແລະ ເວລາ</th>
+                <th class="p-3">ສະຖານະ</th>
                 <th class="p-3 text-right">ACTIONS</th>
             </tr>
         </thead>
@@ -106,7 +106,7 @@
                                     </button>
                                 </form>
                                 <form method="POST" action="{{ route('admin.bookings.reject', $booking) }}"
-                                      onsubmit="return confirm('Reject this booking?')">
+                                      onsubmit="return confirm('ຕ້ອງການປະຕິເສດການຈອງນີ້ບໍ?')">
                                     @csrf @method('PATCH')
                                     <button class="text-red-600 border border-red-200 rounded-lg px-3 py-1 text-xs hover:bg-red-50">
                                         Reject
@@ -119,7 +119,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="p-4 text-center text-gray-500">ไม่พบรายการจอง</td></tr>
+                <tr><td colspan="6" class="p-4 text-center text-gray-500">ບໍ່ມີລາຍການຈອງ</td></tr>
             @endforelse
         </tbody>
     </table>

@@ -3,8 +3,8 @@
 @section('content')
 <div class="flex items-center justify-between mb-4">
     <div>
-        <h1 class="text-3xl font-bold">Dashboard</h1>
-        <p class="text-gray-500">Room Availability Calendar</p>
+        <h1 class="text-3xl font-bold">ໜ້າຫຼັກ</h1>
+        <p class="text-gray-500">ປະຕິທິນການໃຊ້ງານຫ້ອງປະຊຸມ</p>
     </div>
     <a href="{{ route('rooms.index') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
         + New Booking
@@ -14,7 +14,7 @@
 {{-- View switcher: Day / Week / Month --}}
 <div class="flex items-center justify-between mb-4">
     <div class="relative flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
-        @php $tabs = ['day' => 'Day', 'week' => 'Week', 'month' => 'Month']; $tabKeys = array_keys($tabs); $activeIndex = array_search($view, $tabKeys); @endphp
+        @php $tabs = ['day' => 'ມື້', 'week' => 'ອາທິດ', 'month' => 'ເດືອນ']; $tabKeys = array_keys($tabs); $activeIndex = array_search($view, $tabKeys); @endphp
         {{-- แถบพื้นหลังสีแดงที่เลื่อนไปมาตาม tab ที่เลือก --}}
         <div class="absolute top-1 bottom-1 left-1 rounded-lg bg-red-700 shadow-sm transition-transform duration-300 ease-out"
              style="width: calc((100% - 0.5rem) / 3); transform: translateX(calc({{ $activeIndex }} * 100%));"></div>
@@ -29,9 +29,9 @@
     </div>
 
     <div class="flex items-center gap-4 text-sm text-gray-500">
-        <span><span class="inline-block w-2 h-2 rounded-full bg-gray-300 mr-1"></span>Available</span>
-        <span><span class="inline-block w-2 h-2 rounded-full bg-red-700 mr-1"></span>Confirmed</span>
-        <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1 animate-pulse"></span>Pending</span>
+        <span><span class="inline-block w-2 h-2 rounded-full bg-gray-300 mr-1"></span>ວ່າງ</span>
+        <span><span class="inline-block w-2 h-2 rounded-full bg-red-700 mr-1"></span>ຢືນຢັນແລ້ວ</span>
+        <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1 animate-pulse"></span>ລໍຖ້າອະນຸມັດ</span>
     </div>
 </div>
 
@@ -52,7 +52,7 @@
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
         <div class="min-w-[900px]">
             <div class="grid border-b" style="grid-template-columns: 220px repeat({{ count($hours) - 1 }}, 1fr);">
-                <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
+                <div class="p-3 text-xs font-semibold text-gray-500">ຫ້ອງປະຊຸມ</div>
                 @foreach ($hours as $hour)
                     @if (!$loop->last)
                         <div class="p-3 text-xs text-gray-500 border-l">{{ sprintf('%02d:00', $hour) }}</div>
@@ -96,7 +96,7 @@
                                       {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200 animate-pulse' : 'bg-red-700' }}"
                                style="left: {{ $booking->position['left'] }}%; width: {{ $booking->position['width'] }}%;">
                                 <p class="font-semibold uppercase tracking-wide truncate">
-                                    @if ($booking->status === 'pending') &#9200; PENDING @else {{ $booking->title }} @endif
+                                    @if ($booking->status === 'pending') &#9200; ລໍຖ້າອະນຸມັດ @else {{ $booking->title }} @endif
                                 </p>
                                 <p class="truncate">{{ $booking->status === 'pending' ? $booking->title : $booking->user->name }}</p>
                             </button>
@@ -127,7 +127,7 @@
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
         <div class="min-w-[1000px]">
             <div class="grid border-b" style="grid-template-columns: 180px repeat(7, 1fr);">
-                <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
+                <div class="p-3 text-xs font-semibold text-gray-500">ຫ້ອງປະຊຸມ</div>
                 @foreach ($weekDays as $day)
                     <div class="p-3 text-xs text-gray-500 border-l text-center {{ $day->isToday() ? 'bg-red-50 text-red-700 font-semibold' : '' }}">
                         {{ $day->format('D') }}<br>
@@ -222,7 +222,7 @@
                             </button>
                         @endforeach
                         @if ($dayBookings->count() > 3)
-                            <p class="text-[10px] text-gray-400">+{{ $dayBookings->count() - 3 }} more</p>
+                            <p class="text-[10px] text-gray-400">+{{ $dayBookings->count() - 3 }} ລາຍການ</p>
                         @endif
                     </div>
                 @endforeach
@@ -246,16 +246,16 @@
             <p>📅 <span id="modal-date"></span></p>
             <p>🕐 <span id="modal-time"></span></p>
             <p>👤 <span id="modal-user"></span></p>
-            <p>👥 <span id="modal-attendees"></span> ผู้เข้าร่วม</p>
+            <p>👥 <span id="modal-attendees"></span> ຜູ້ເຂົ້າຮ່ວມ</p>
         </div>
 
         <div id="modal-description-wrap" class="mb-4">
-            <p class="text-xs font-medium text-gray-500 mb-1">รายละเอียด</p>
+            <p class="text-xs font-medium text-gray-500 mb-1">ລາຍລະອຽດ</p>
             <p id="modal-description" class="text-sm text-gray-700"></p>
         </div>
 
         <a href="{{ route('bookings.index') }}" class="block text-center bg-red-700 text-white rounded-lg py-2 text-sm font-medium">
-            ไปที่ My Bookings
+            ໄປທີ່ My Bookings
         </a>
     </div>
 </div>
@@ -290,11 +290,11 @@
         document.getElementById('modal-attendees').textContent = d.attendees;
 
         const statusMap = {
-            confirmed: ['Confirmed', 'bg-green-50 text-green-700'],
-            pending: ['Pending', 'bg-yellow-50 text-yellow-700'],
-            cancelled: ['Cancelled', 'bg-red-50 text-red-600'],
+            confirmed: ['ຢືນຢັນແລ້ວ', 'bg-green-50 text-green-700'],
+            pending: ['ລໍຖ້າອະນຸມັດ', 'bg-yellow-50 text-yellow-700'],
+            cancelled: ['ຍົກເລີກ', 'bg-red-50 text-red-600'],
         };
-        const [label, cls] = statusMap[d.status] || ['Unknown', 'bg-gray-100 text-gray-600'];
+        const [label, cls] = statusMap[d.status] || ['ບໍ່ຮູ້ສະຖານະ', 'bg-gray-100 text-gray-600'];
         const statusEl = document.getElementById('modal-status');
         statusEl.textContent = label;
         statusEl.className = 'text-xs px-2 py-1 rounded-full font-medium inline-block mb-3 ' + cls;
