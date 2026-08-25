@@ -60,7 +60,7 @@
                     ☰
                 </button>
             @else
-                <a href="{{ route('login') }}" class="text-sm text-red-700 font-medium hover:underline">Login</a>
+                <a href="{{ route('login') }}" class="text-sm text-red-700 font-medium hover:underline">ເຂົ້າລະບົບ</a>
             @endauth
         </div>
 
@@ -70,15 +70,15 @@
     @auth
         <div id="mobile-menu" class="md:hidden bg-white border-b border-gray-200 px-4 overflow-hidden transition-all duration-300 ease-in-out max-h-0 opacity-0">
             <div class="py-3 space-y-1">
-                <a href="{{ route('dashboard') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('dashboard') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">Dashboard</a>
-                <a href="{{ route('rooms.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('rooms.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">Rooms</a>
-                <a href="{{ route('bookings.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('bookings.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">My Bookings</a>
+                <a href="{{ route('dashboard') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('dashboard') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ໜ້າຫຼັກ</a>
+                <a href="{{ route('rooms.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('rooms.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ຫ້ອງປະຊຸມ</a>
+                <a href="{{ route('bookings.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('bookings.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ການຈອງຂອງຂ້ອຍ</a>
                 @if (auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.bookings.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('admin.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">Approvals</a>
+                    <a href="{{ route('admin.bookings.index') }}" class="block py-2 text-sm transition-colors duration-150 {{ request()->routeIs('admin.*') ? 'text-red-700 font-semibold' : 'text-gray-600 hover:text-red-700' }}">ອະນຸມັດການຈອງ</a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t">
                     @csrf
-                    <button type="submit" class="w-full text-left py-2 text-sm text-gray-600">Logout</button>
+                    <button type="submit" class="w-full text-left py-2 text-sm text-gray-600">ອອກຈາກລະບົບ</button>
                 </form>
             </div>
         </div>

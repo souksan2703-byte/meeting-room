@@ -3,14 +3,14 @@
 @section('content')
 <div class="flex justify-between items-center mb-6">
     <div>
-        <h1 class="text-3xl font-bold">My Bookings</h1>
-        <p class="text-gray-500">Manage your upcoming and past room reservations.</p>
+        <h1 class="text-3xl font-bold">ການຈອງຂອງຂ້ອຍ</h1>
+        <p class="text-gray-500">ຈັດການການຈອງຫ້ອງຂອງທ່ານທັງທີ່ຈະມາເຖິງ ແລະທີ່ຜ່ານມາ</p>
     </div>
     <div class="flex items-center gap-3">
         <div class="relative">
             <select onchange="window.location.href=this.value"
                     class="appearance-none border rounded-lg pl-4 pr-8 py-2 text-sm bg-white cursor-pointer">
-                <option value="{{ route('bookings.index') }}" {{ !request('status') ? 'selected' : '' }}>All Bookings</option>
+                <option value="{{ route('bookings.index') }}" {{ !request('status') ? 'selected' : '' }}>ການຈອງທັງໝົດ</option>
                 <option value="{{ route('bookings.index', ['status' => 'upcoming']) }}" {{ request('status') === 'upcoming' ? 'selected' : '' }}>Upcoming Only</option>
                 <option value="{{ route('bookings.index', ['status' => 'past']) }}" {{ request('status') === 'past' ? 'selected' : '' }}>Past Only</option>
             </select>
@@ -54,32 +54,32 @@
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-500 flex items-center gap-1">👥 {{ $booking->attendeesCount() }} Attendees</span>
                 <div class="flex gap-2">
-                    <a href="{{ route('bookings.edit', $booking) }}" class="border rounded-lg px-3 py-1 text-sm">Edit</a>
+                    <a href="{{ route('bookings.edit', $booking) }}" class="border rounded-lg px-3 py-1 text-sm">ແກ້ໄຂ</a>
                     <form method="POST" action="{{ route('bookings.destroy', $booking) }}"
-                          onsubmit="return confirm('Cancel this booking?')">
+                          onsubmit="return confirm('ຕ້ອງການຍົກເລີກການຈອງນີ້ບໍ?')">
                         @csrf @method('DELETE')
-                        <button class="text-red-600 text-sm px-2">Cancel</button>
+                        <button class="text-red-600 text-sm px-2">ຍົກເລີກ</button>
                     </form>
                 </div>
             </div>
         </div>
     @empty
-        <p class="text-gray-500 col-span-2">You have no upcoming bookings.</p>
+        <p class="text-gray-500 col-span-2">ທ່ານບໍ່ມີການຈອງທີ່ຈະມາເຖິງ</p>
     @endforelse
 </div>
 @endif
 
 @if (request('status') !== 'upcoming')
-<h2 class="text-lg font-bold mb-3">Past Bookings</h2>
+<h2 class="text-lg font-bold mb-3">ການຈອງທີ່ຜ່ານມາ</h2>
 <div class="bg-white rounded-lg shadow-sm overflow-hidden">
     <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-left">
             <tr>
                 <th class="p-3">Room</th>
-                <th class="p-3">Location</th>
-                <th class="p-3">Date &amp; Time</th>
+                <th class="p-3">ສະຖານທີ່</th>
+                <th class="p-3">ວັນທີ ແລະ ເວລາ</th>
                 <th class="p-3">Status</th>
-                <th class="p-3 text-right">Action</th>
+                <th class="p-3 text-right">ການດຳເນີນການ</th>
             </tr>
         </thead>
         <tbody>
@@ -101,7 +101,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="p-3 text-gray-500">No past bookings.</td></tr>
+                <tr><td colspan="5" class="p-3 text-gray-500">ບໍ່ມີການຈອງທີ່ຜ່ານມາ</td></tr>
             @endforelse
         </tbody>
     </table>

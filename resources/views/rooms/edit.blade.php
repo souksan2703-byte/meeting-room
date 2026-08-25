@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="lo">
 
 <head>
 
@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>แก้ไขห้องประชุม</title>
+    <title>ແກ້ໄຂຫ້ອງປະຊຸມ</title>
 
     <style>
         * {
@@ -110,7 +110,7 @@
 
     <div class="card">
 
-        <h1>แก้ไขห้องประชุม</h1>
+        <h1>ແກ້ໄຂຫ້ອງປະຊຸມ</h1>
 
         <form action="{{ route('rooms.update', $room->id) }}" method="POST">
 
@@ -121,7 +121,7 @@
             <div class="form-group">
 
                 <label for="name">
-                    ชื่อห้องประชุม
+                    ຊື່ຫ້ອງປະຊຸມ
                 </label>
 
                 <input
@@ -129,7 +129,7 @@
                     id="name"
                     name="name"
                     value="{{ old('name', $room->name) }}"
-                    placeholder="เช่น ห้องประชุม A"
+                    placeholder="ເຊັ່ນ ຫ້ອງປະຊຸມ A"
                     required
                 >
 
@@ -174,7 +174,7 @@
             <div class="form-group">
 
                 <label for="location">
-                    สถานที่ / ที่ตั้ง
+                    ສະຖານທີ່ / ທີ່ຕັ້ງ
                 </label>
 
                 <input
@@ -203,7 +203,7 @@
                     type="submit"
                     class="btn btn-save"
                 >
-                    บันทึกการแก้ไข
+                    ບັນທຶກການແກ້ໄຂ
                 </button>
 
 

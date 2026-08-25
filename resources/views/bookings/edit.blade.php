@@ -5,8 +5,8 @@
 
     <div class="flex justify-between items-start mb-4">
         <div>
-            <h2 class="text-xl font-bold">Edit Booking</h2>
-            <p class="text-sm text-gray-500">แก้ไขรายละเอียดการจองของคุณ</p>
+            <h2 class="text-xl font-bold">ແກ້ໄຂການຈອງ</h2>
+            <p class="text-sm text-gray-500">ແກ້ໄຂລາຍລະອຽດການຈອງຂອງທ່ານ</p>
         </div>
         <span class="text-xs px-2 py-1 rounded-full
             {{ match($booking->status) {
@@ -43,19 +43,19 @@
 
         <div class="grid grid-cols-3 gap-3">
             <div>
-                <label class="text-xs font-medium text-gray-600">Date</label>
+                <label class="text-xs font-medium text-gray-600">ວັນທີ</label>
                 <input type="date" name="date"
                        value="{{ old('date', $booking->start_time->format('Y-m-d')) }}"
                        class="w-full border rounded-lg p-2 text-sm" required>
             </div>
             <div>
-                <label class="text-xs font-medium text-gray-600">Start Time</label>
+                <label class="text-xs font-medium text-gray-600">ເວລາເລີ່ມ</label>
                 <input type="time" name="start_time"
                        value="{{ old('start_time', $booking->start_time->format('H:i')) }}"
                        class="w-full border rounded-lg p-2 text-sm" required>
             </div>
             <div>
-                <label class="text-xs font-medium text-gray-600">End Time</label>
+                <label class="text-xs font-medium text-gray-600">ເວລາສິ້ນສຸດ</label>
                 <input type="time" name="end_time"
                        value="{{ old('end_time', $booking->end_time->format('H:i')) }}"
                        class="w-full border rounded-lg p-2 text-sm" required>
@@ -63,7 +63,7 @@
         </div>
 
         <div>
-            <label class="text-xs font-medium text-gray-600">Meeting Title</label>
+            <label class="text-xs font-medium text-gray-600">ຫົວຂໍ້ການປະຊຸມ</label>
             <input type="text" name="title" value="{{ old('title', $booking->title) }}"
                    class="w-full border rounded-lg p-2 text-sm" required>
         </div>
@@ -75,7 +75,7 @@
         </div>
 
         <div>
-            <label class="text-xs font-medium text-gray-600">จำนวนผู้เข้าร่วมประชุม</label>
+            <label class="text-xs font-medium text-gray-600">ຈຳນວນຜູ້ເຂົ້າຮ່ວມປະຊຸມ</label>
             <div class="flex items-center gap-3 mt-1">
                 <button type="button" onclick="changeAttendees(-1)"
                         class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">−</button>
@@ -87,13 +87,13 @@
                 <button type="button" onclick="changeAttendees(1)"
                         class="w-10 h-10 border rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-50">+</button>
 
-                <span class="text-xs text-gray-400">สูงสุด {{ $booking->room->capacity }} คน (ความจุห้อง)</span>
+                <span class="text-xs text-gray-400">ສູງສຸດ {{ $booking->room->capacity }} ຄົນ (ຄວາມຈຸຫ້ອງ)</span>
             </div>
         </div>
 
         <div class="flex justify-end gap-3 pt-3 border-t">
-            <a href="{{ route('bookings.index') }}" class="border rounded-lg px-4 py-2 text-sm">Cancel</a>
-            <button type="submit" class="bg-red-700 text-white rounded-lg px-4 py-2 text-sm">Save Changes</button>
+            <a href="{{ route('bookings.index') }}" class="border rounded-lg px-4 py-2 text-sm">ຍົກເລີກ</a>
+            <button type="submit" class="bg-red-700 text-white rounded-lg px-4 py-2 text-sm">ບັນທຶກການປ່ຽນແປງ</button>
         </div>
     </form>
 </div>

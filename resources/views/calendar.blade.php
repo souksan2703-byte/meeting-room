@@ -78,21 +78,21 @@
 
             <div>
                 <span class="badge bg-warning text-dark">
-                    Pending
+                    ລໍຖ້າອະນຸມັດ
                 </span>
                 ລໍຖ້າອະນຸມັດ
             </div>
 
             <div>
                 <span class="badge bg-success">
-                    Approved
+                    ອະນຸມັດແລ້ວ
                 </span>
                 ອະນຸມັດແລ້ວ
             </div>
 
             <div>
                 <span class="badge bg-danger">
-                    Rejected
+                    ປະຕິເສດ
                 </span>
                 ປະຕິເສດ
             </div>
@@ -367,7 +367,7 @@
 
                     } else {
 
-                        // Pending
+                        // ລໍຖ້າອະນຸມັດ
                         info.el.style.backgroundColor = '#ffc107';
                         info.el.style.borderColor = '#ffc107';
                         info.el.style.color = '#000';

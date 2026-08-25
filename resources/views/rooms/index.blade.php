@@ -3,8 +3,8 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <div>
-        <h1 class="text-3xl font-bold">Rooms</h1>
-        <p class="text-gray-500">Browse all meeting rooms and check availability.</p>
+        <h1 class="text-3xl font-bold">ຫ້ອງປະຊຸມ</h1>
+        <p class="text-gray-500">ເບິ່ງຫ້ອງປະຊຸມທັງໝົດ ແລະກວດເບິ່ງສະຖານະຫ້ອງ</p>
     </div>
     <a href="{{ route('dashboard') }}" class="border rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
         View Timeline
@@ -24,7 +24,7 @@
                 <div class="flex items-start justify-between mb-1">
                     <h3 class="font-bold text-lg">{{ $room->name }}</h3>
                     <span class="text-xs border rounded-lg px-2 py-1 text-gray-600 whitespace-nowrap">
-                        {{ $room->capacity }} คน
+                        {{ $room->capacity }} ຄົນ
                     </span>
                 </div>
                 <p class="text-sm text-gray-500 mb-3">{{ $room->location }}</p>
@@ -40,7 +40,7 @@
             </div>
         </a>
     @empty
-        <p class="text-gray-500 col-span-full">ยังไม่มีห้องประชุมที่เปิดใช้งานในระบบ</p>
+        <p class="text-gray-500 col-span-full">ຍັງບໍ່ມີຫ້ອງປະຊຸມໃນລະບົບເທື່ອ</p>
     @endforelse
 </div>
 @endsection

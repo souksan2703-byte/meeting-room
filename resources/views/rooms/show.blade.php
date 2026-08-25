@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<a href="{{ route('rooms.index') }}" class="text-sm text-gray-500">&larr; Back to Rooms</a>
+<a href="{{ route('rooms.index') }}" class="text-sm text-gray-500">&larr; ກັບໄປຫາຫ້ອງປະຊຸມ</a>
 
 <div class="flex items-center justify-between mt-2">
     <div>
@@ -9,9 +9,9 @@
         <p class="text-gray-500">{{ $room->location }}</p>
     </div>
     <div class="flex gap-2">
-        <span class="border rounded-lg px-3 py-1 text-sm">Capacity: {{ $room->capacity }}</span>
+        <span class="border rounded-lg px-3 py-1 text-sm">ຄວາມຈຸ: {{ $room->capacity }}</span>
         @if ($isAvailableNow)
-            <span class="bg-gray-100 rounded-lg px-3 py-1 text-sm">Available Now</span>
+            <span class="bg-gray-100 rounded-lg px-3 py-1 text-sm">ວ່າງໃນຕອນນີ້</span>
         @endif
     </div>
 </div>
@@ -33,7 +33,7 @@
     {{-- Date / time slot picker --}}
     <div class="space-y-4">
         <div class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="font-semibold mb-3">Select Date</h3>
+            <h3 class="font-semibold mb-3">ເລືອກວັນທີ</h3>
             <div class="flex items-center justify-between mb-2">
                 <a href="{{ route('rooms.show', ['room' => $room, 'date' => $selectedDate->copy()->subDay()->format('Y-m-d')]) }}"
                    class="text-gray-400 hover:text-red-700 px-2">&lt;</a>
@@ -50,8 +50,8 @@
 
         <div class="bg-white rounded-lg shadow-sm p-4">
             <div class="flex justify-between mb-3">
-                <h3 class="font-semibold">Time Slots</h3>
-                <span class="text-xs text-gray-400">Local Time</span>
+                <h3 class="font-semibold">ຊ່ວງເວລາ</h3>
+                <span class="text-xs text-gray-400">ເວລາທ້ອງຖິ່ນ</span>
             </div>
 
             <form method="GET" action="{{ route('bookings.create', $room) }}" id="slot-form">
@@ -74,18 +74,18 @@
             Book Now &rarr;
         </a>
         @if ($room->requires_approval)
-            <p class="text-center text-xs text-gray-400">Requires Manager Approval</p>
+            <p class="text-center text-xs text-gray-400">ຕ້ອງລໍຖ້າການອະນຸມັດຈາກຜູ້ຈັດການ</p>
         @endif
     </div>
 </div>
 
 <div class="grid grid-cols-3 gap-6 mt-6">
     <div class="bg-white rounded-lg shadow-sm p-4">
-        <h4 class="font-semibold mb-1">Building Location</h4>
+        <h4 class="font-semibold mb-1">ສະຖານທີ່ອາຄານ</h4>
         <p class="text-sm text-gray-500">{{ $room->location }}</p>
     </div>
     <div class="bg-white rounded-lg shadow-sm p-4">
-        <h4 class="font-semibold mb-1">Usage Policies</h4>
+        <h4 class="font-semibold mb-1">ລະບຽບການໃຊ້ງານ</h4>
         <p class="text-sm text-gray-500">{{ $room->policies }}</p>
     </div>
     <div class="bg-white rounded-lg shadow-sm p-4">

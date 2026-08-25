@@ -3,8 +3,8 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <div>
-        <h1 class="text-3xl font-bold">Users</h1>
-        <p class="text-gray-500">จัดการผู้ใช้งานและสิทธิ์การเข้าถึงระบบ ({{ $totalAdmins }} Admin ทั้งหมด)</p>
+        <h1 class="text-3xl font-bold">ຜູ້ໃຊ້</h1>
+        <p class="text-gray-500">ຈັດການຜູ້ໃຊ້ ແລະສິດການເຂົ້າເຖິງລະບົບ ({{ $totalAdmins }} Admin ທັງໝົດ)</p>
     </div>
     <a href="{{ route('admin.users.create') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
         + Add New User
@@ -26,9 +26,9 @@
 
 <div class="bg-white rounded-lg shadow-sm">
     <div class="flex items-center justify-between p-4 border-b">
-        <h2 class="text-lg font-bold">All Users</h2>
+        <h2 class="text-lg font-bold">ຜູ້ໃຊ້ທັງໝົດ</h2>
         <form method="GET" action="{{ route('admin.users.index') }}">
-            <input type="text" name="q" value="{{ $search }}" placeholder="Search name or email..."
+            <input type="text" name="q" value="{{ $search }}" placeholder="ຄົ້ນຫາຊື່ ຫຼື ອີເມວ..."
                    onchange="this.form.submit()"
                    class="border rounded-lg px-4 py-2 text-sm w-64">
         </form>
@@ -38,11 +38,11 @@
     <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-left">
             <tr>
-                <th class="p-3">Name</th>
-                <th class="p-3">Email</th>
-                <th class="p-3">Role</th>
-                <th class="p-3">Bookings</th>
-                <th class="p-3 text-right">Actions</th>
+                <th class="p-3">ຊື່</th>
+                <th class="p-3">ອີເມວ</th>
+                <th class="p-3">ສິດຜູ້ໃຊ້</th>
+                <th class="p-3">ການຈອງ</th>
+                <th class="p-3 text-right">ການດຳເນີນການ</th>
             </tr>
         </thead>
         <tbody>
@@ -64,8 +64,8 @@
                             <select name="role" onchange="this.form.submit()"
                                     class="text-xs rounded-full px-2.5 py-1 border-0 font-medium cursor-pointer
                                            {{ $user->role === 'admin' ? 'bg-red-50 text-red-700' : 'bg-gray-100 text-gray-600' }}">
-                                <option value="staff" {{ $user->role === 'staff' ? 'selected' : '' }}>Staff</option>
-                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="staff" {{ $user->role === 'staff' ? 'selected' : '' }}>ພະນັກງານ</option>
+                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>ຜູ້ດູແລລະບົບ</option>
                             </select>
                         </form>
                     </td>
@@ -85,7 +85,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="p-4 text-center text-gray-500">ไม่พบผู้ใช้งาน</td></tr>
+                <tr><td colspan="5" class="p-4 text-center text-gray-500">ບໍ່ມີຜູ້ໃຊ້ງານ</td></tr>
             @endforelse
         </tbody>
     </table>

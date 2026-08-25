@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="lo">
 
 <head>
     <meta charset="UTF-8">
@@ -116,7 +116,7 @@
                 <div class="form-group">
                     <label for="name">ຊື່ຫ້ອງປະຊຸມ</label>
 
-                    <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="เช่น ห้องประชุม A"
+                    <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="ເຊັ່ນ ຫ້ອງປະຊຸມ A"
                         required>
 
                     @error('name')

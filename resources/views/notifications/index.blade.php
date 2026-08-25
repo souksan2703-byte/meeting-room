@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold mb-1">Notifications</h1>
-    <p class="text-gray-500 mb-6">การแจ้งเตือนทั้งหมดของคุณ</p>
+    <h1 class="text-3xl font-bold mb-1">ການແຈ້ງເຕືອນ</h1>
+    <p class="text-gray-500 mb-6">ການແຈ້ງເຕືອນທັງໝົດຂອງທ່ານ</p>
 
     <div class="bg-white rounded-lg shadow-sm divide-y">
         @forelse ($notifications as $notification)
@@ -18,7 +18,7 @@
                 </div>
             </a>
         @empty
-            <p class="p-6 text-center text-gray-400 text-sm">ยังไม่มีการแจ้งเตือน</p>
+            <p class="p-6 text-center text-gray-400 text-sm">ຍັງບໍ່ມີການແຈ້ງເຕືອນ</p>
         @endforelse
     </div>
 
