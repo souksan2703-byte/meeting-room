@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="lo">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>เพิ่มห้องประชุม</title>
+    <title>ເພີ່ມຫ້ອງປະຊຸມ</title>
 
     <style>
         * {
@@ -107,16 +107,16 @@
 
         <div class="card">
 
-            <h1>เพิ่มห้องประชุม</h1>
+            <h1>ເພີ່ມຫ້ອງປະຊຸມ</h1>
 
             <form action="{{ route('rooms.store') }}" method="POST">
 
                 @csrf
 
                 <div class="form-group">
-                    <label for="name">ชื่อห้องประชุม</label>
+                    <label for="name">ຊື່ຫ້ອງປະຊຸມ</label>
 
-                    <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="เช่น ห้องประชุม A"
+                    <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="ເຊັ່ນ ຫ້ອງປະຊຸມ A"
                         required>
 
                     @error('name')
@@ -127,7 +127,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="capacity">ความจุ</label>
+                    <label for="capacity">ຄວາມຈຸຸ</label>
 
                     <input type="number" id="capacity" name="capacity" value="{{ old('capacity') }}"
                         placeholder="เช่น 20" min="1" required>
@@ -154,11 +154,11 @@
                 <div class="buttons">
 
                     <button type="submit" class="btn btn-save">
-                        บันทึก
+                        ບັນທຶກ
                     </button>
 
                     <a href="{{ route('rooms.index') }}" class="btn btn-back">
-                        ยกเลิก
+                        ຍົກເລີກ
                     </a>
 
                 </div>

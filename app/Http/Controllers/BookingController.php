@@ -4,156 +4,177 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Room;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class BookingController extends Controller
 {
-    // แสดงรายการจองทั้งหมด
-    public function index()
+    /**
+     * "My Bookings" page (Image 4)
+     */
+    public function index(Request $request)
     {
-        $bookings = Booking::with('room')
-            ->orderBy('booking_date', 'desc')
-            ->orderBy('start_time', 'asc')
+        $userId = $request->user()->id;
+        $search = $request->input('q');
+
+        $upcoming = Booking::with('room')
+            ->where('user_id', $userId)
+            ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
+            ->upcoming()
             ->get();
 
-        return view('bookings.index', compact('bookings'));
+        $past = Booking::with('room')
+            ->where('user_id', $userId)
+            ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
+            ->past()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('bookings.index', compact('upcoming', 'past'));
     }
 
-    // หน้าเพิ่มการจอง
-    public function create()
+    /**
+     * "Book Meeting Room" form (Image 3), pre-filled from the room page.
+     */
+    public function create(Request $request, Room $room)
     {
-        $rooms = Room::orderBy('name')->get();
+        $date = $request->input('date', now()->format('Y-m-d'));
+        $start = $request->input('start'); // e.g. "11:30"
 
-        return view('bookings.create', compact('rooms'));
+        return view('bookings.create', [
+            'room' => $room,
+            'date' => $date,
+            'start' => $start,
+        ]);
     }
 
-    // บันทึกการจอง
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'room_id' => 'required|exists:rooms,id',
-            'booker_name' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'meeting_title' => 'required|string|max:255',
-            'booking_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'attendees' => 'required|integer|min:1',
-            'note' => 'nullable|string',
-            'status' => 'nullable|in:Pending,Approved,Rejected',
+            'room_id' => ['required', 'exists:rooms,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'attendees' => ['required', 'integer', 'min:1'],
         ]);
 
-        // ตรวจสอบเวลาซ้ำ
-        $overlap = Booking::where('room_id', $validated['room_id'])
-            ->where('booking_date', $validated['booking_date'])
-            ->where(function ($query) use ($validated) {
-                $query->where('start_time', '<', $validated['end_time'])
-                    ->where('end_time', '>', $validated['start_time']);
-            })
-            ->exists();
+        $room = Room::findOrFail($validated['room_id']);
 
-        if ($overlap) {
+        if ($validated['attendees'] > $room->capacity) {
             return back()
                 ->withInput()
-                ->withErrors([
-                    'start_time' => 'ห้องนี้มีการจองในช่วงเวลาดังกล่าวแล้ว กรุณาเลือกเวลาอื่น',
-                ]);
+                ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $room->capacity . ' คน)']);
         }
 
-        Booking::create($validated);
+        $start = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
+        $end = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
+
+        // Prevent double-booking the same room/time
+        $overlaps = $room->bookings()
+            ->where('status', '!=', 'cancelled')
+            ->where('start_time', '<', $end)
+            ->where('end_time', '>', $start)
+            ->exists();
+
+        if ($overlaps) {
+            return back()
+                ->withInput()
+                ->withErrors(['start_time' => 'This room is already booked for part of that time range.']);
+        }
+
+        $booking = Booking::create([
+            'room_id' => $room->id,
+            'user_id' => $request->user()->id,
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'start_time' => $start,
+            'end_time' => $end,
+            'status' => $room->requires_approval ? 'pending' : 'confirmed',
+            'attendees' => $validated['attendees'],
+        ]);
+
+        // แจ้งเตือน Admin ทุกครั้งที่มีการจองใหม่เข้ามา
+        NotificationService::notifyAdmins(
+            title: 'มีการจองห้องประชุมใหม่',
+            body: $request->user()->name . ' จอง ' . $room->name . ' — ' . $booking->title
+                . ' (' . $start->format('d/m/Y H:i') . ' - ' . $end->format('H:i') . ')'
+                . ($booking->status === 'pending' ? ' — รอการอนุมัติ' : ''),
+            link: route('admin.bookings.index')
+        );
 
         return redirect()
             ->route('bookings.index')
-            ->with('success', 'เพิ่มรายการจองเรียบร้อยแล้ว');
+            ->with('success', 'Booking confirmed for ' . $room->name . '.');
     }
 
-    // แสดงรายละเอียดการจอง
-    public function show(Booking $booking)
-    {
-        $booking->load('room');
-
-        return view('bookings.show', compact('booking'));
-    }
-
-    // หน้าแก้ไข
     public function edit(Booking $booking)
     {
-        $rooms = Room::orderBy('name')->get();
+        $this->authorizeOwner($booking);
 
-        return view('bookings.edit', compact('booking', 'rooms'));
+        return view('bookings.edit', compact('booking'));
     }
 
-    // อัปเดตการจอง
     public function update(Request $request, Booking $booking)
     {
+        $this->authorizeOwner($booking);
+
         $validated = $request->validate([
-            'room_id' => 'required|exists:rooms,id',
-            'booker_name' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'meeting_title' => 'required|string|max:255',
-            'booking_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'attendees' => 'required|integer|min:1',
-            'note' => 'nullable|string',
-            'status' => 'nullable|in:Pending,Approved,Rejected',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'attendees' => ['required', 'integer', 'min:1'],
         ]);
 
-        // ตรวจสอบเวลาซ้ำ โดยไม่ตรวจรายการปัจจุบันของตัวเอง
-        $overlap = Booking::where('room_id', $validated['room_id'])
-            ->where('booking_date', $validated['booking_date'])
-            ->where('id', '!=', $booking->id)
-            ->where(function ($query) use ($validated) {
-                $query->where('start_time', '<', $validated['end_time'])
-                    ->where('end_time', '>', $validated['start_time']);
-            })
-            ->exists();
-
-        if ($overlap) {
+        if ($validated['attendees'] > $booking->room->capacity) {
             return back()
                 ->withInput()
-                ->withErrors([
-                    'start_time' => 'ห้องนี้มีการจองในช่วงเวลาดังกล่าวแล้ว กรุณาเลือกเวลาอื่น',
-                ]);
+                ->withErrors(['attendees' => 'จำนวนผู้เข้าร่วมเกินความจุของห้อง (สูงสุด ' . $booking->room->capacity . ' คน)']);
         }
 
-        $booking->update($validated);
+        $newStart = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
+        $newEnd = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
 
-        return redirect()
-            ->route('bookings.index')
-            ->with('success', 'แก้ไขรายการจองเรียบร้อยแล้ว');
+        // เช็คว่าเวลาที่แก้ไขใหม่ไปทับกับ booking อื่นในห้องเดียวกันหรือไม่ (ไม่นับตัวเองและที่ยกเลิกไปแล้ว)
+        $overlaps = $booking->room->bookings()
+            ->where('id', '!=', $booking->id)
+            ->where('status', '!=', 'cancelled')
+            ->where('start_time', '<', $newEnd)
+            ->where('end_time', '>', $newStart)
+            ->exists();
+
+        if ($overlaps) {
+            return back()
+                ->withInput()
+                ->withErrors(['start_time' => 'ห้องนี้ถูกจองในช่วงเวลาดังกล่าวไปแล้ว']);
+        }
+
+        $booking->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'start_time' => $newStart,
+            'end_time' => $newEnd,
+            'attendees' => $validated['attendees'],
+        ]);
+
+        return redirect()->route('bookings.index')->with('success', 'Booking updated.');
     }
 
-    // ลบการจอง
     public function destroy(Booking $booking)
     {
-        $booking->delete();
+        $this->authorizeOwner($booking);
 
-        return redirect()
-            ->route('bookings.index')
-            ->with('success', 'ลบรายการจองเรียบร้อยแล้ว');
+        $booking->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Booking cancelled.');
     }
 
-    // ข้อมูลสำหรับ FullCalendar
-    public function calendarEvents()
+    private function authorizeOwner(Booking $booking): void
     {
-        $bookings = Booking::with('room')->get();
-
-        $events = $bookings->map(function ($booking) {
-            return [
-                'id' => $booking->id,
-                'title' => $booking->room->name . ' - ' . $booking->meeting_title,
-                'start' => $booking->booking_date . 'T' . $booking->start_time,
-                'end' => $booking->booking_date . 'T' . $booking->end_time,
-                'extendedProps' => [
-                    'booker_name' => $booking->booker_name,
-                    'department' => $booking->department,
-                    'status' => $booking->status,
-                    'attendees' => $booking->attendees,
-                ],
-            ];
-        });
-
-        return response()->json($events);
+        abort_unless($booking->user_id === request()->user()->id, 403);
     }
-}   
+}

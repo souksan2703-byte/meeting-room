@@ -2,71 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Room;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = Room::all();
+        $rooms = Room::orderBy('floor')->orderBy('name')->get();
 
         return view('rooms.index', compact('rooms'));
     }
 
-    public function create()
+    public function show(Request $request, Room $room)
     {
-        return view('rooms.create');
-    }
+        $date = $request->input('date', now()->format('Y-m-d'));
+        $selectedDate = Carbon::parse($date);
 
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'capacity' => 'required|integer|min:1',
-        'location' => 'required|string|max:255',
-    ]);
+        $bookings = $room->bookingsForDate($date);
 
-    Room::create([
-        'name' => $request->name,
-        'capacity' => $request->capacity,
-        'location' => $request->location,
-    ]);
+        // Build 30-min slots between 09:00 and 13:30 (mirrors the mock; adjust as needed)
+        $slots = [];
+        $slotStart = Carbon::parse($date)->setTime(9, 0);
+        $slotEnd = Carbon::parse($date)->setTime(13, 30);
 
-    return redirect()
-        ->route('rooms.index')
-        ->with('success', 'ເພີ່ມຫ້ອງປະຊຸມສຳເລັດ');
-}
+        while ($slotStart->lte($slotEnd)) {
+            $slotFinish = $slotStart->copy()->addMinutes(30);
 
-   public function update(Request $request, string $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'capacity' => 'required|integer|min:1',
-        'location' => 'required|string|max:255',
-    ]);
+            $isBooked = $bookings->contains(function ($booking) use ($slotStart, $slotFinish) {
+                return $slotStart->lt($booking->end_time) && $slotFinish->gt($booking->start_time);
+            });
 
-    $room = Room::findOrFail($id);
+            $slots[] = [
+                'time' => $slotStart->format('h:i A'),
+                'value' => $slotStart->format('H:i'),
+                'available' => !$isBooked,
+            ];
 
-    $room->update([
-        'name' => $request->name,
-        'capacity' => $request->capacity,
-        'location' => $request->location,
-    ]);
+            $slotStart->addMinutes(30);
+        }
 
-    return redirect()
-        ->route('rooms.index')
-        ->with('success', 'ແກ້ໄຂຫ້ອງປະຊຸມສຳເລັດ');
-}
+        $isAvailableNow = !$bookings->contains(function ($booking) {
+            return now()->between($booking->start_time, $booking->end_time);
+        });
 
-    public function destroy(string $id)
-    {
-        $room = Room::findOrFail($id);
-
-        $room->delete();
-
-        return redirect()
-            ->route('rooms.index')
-            ->with('success', 'ລຶບຫ້ອງປະຊຸມສຳເລັດ');
+        return view('rooms.show', [
+            'room' => $room,
+            'slots' => $slots,
+            'selectedDate' => $selectedDate,
+            'isAvailableNow' => $isAvailableNow,
+        ]);
     }
 }

@@ -1,18 +1,1 @@
 @import "tailwindcss";
-<<<<<<< Updated upstream
-
-.nav-link {
-    transition: 0.3s;
-}
-
-.nav-link:hover {
-    background: #C62828;
-    color: #fff;
-    border-radius: 8px;
-=======
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Phetsarath:wght@400;700&display=swap');
-@import "tailwindcss";
-body {
-    font-family: 'Google Sans', 'Phetsarath', sans-serif;
->>>>>>> Stashed changes
-}

@@ -1,47 +1,60 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.guest')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@section('title', 'Login - RoomReserve')
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+@section('content')
+<h2 class="text-xl font-bold text-gray-800 mb-1">Welcome back</h2>
+<p class="text-sm text-gray-500 mb-6">ເຂົ້າສູ່ລະບົບເພື່ອຈອງຫ້ອງປະຊຸມ</p>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+@if (session('status'))
+    <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3 mb-4">
+        {{ session('status') }}
+    </div>
+@endif
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+@if ($errors->any())
+    <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4">
+        <ul class="list-disc list-inside">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+<form method="POST" action="{{ route('login') }}" class="space-y-4">
+    @csrf
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+    <div>
+        <label class="text-xs font-medium text-gray-600">Email</label>
+        <input type="email" name="email" value="{{ old('email') }}"
+               class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-red-200 focus:border-red-500 outline-none"
+               required autofocus autocomplete="username">
+    </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+    <div>
+        <label class="text-xs font-medium text-gray-600">Password</label>
+        <input type="password" name="password"
+               class="w-full border rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-red-200 focus:border-red-500 outline-none"
+               required autocomplete="current-password">
+    </div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    <div class="flex items-center justify-between text-sm">
+        <label class="flex items-center gap-2 text-gray-600">
+            <input type="checkbox" name="remember" class="rounded border-gray-300 text-red-700 focus:ring-red-500">
+            Remember me
+        </label>
+
+        @if (Route::has('password.request'))
+            <a href="{{ route('password.request') }}" class="text-red-700 hover:underline">
+                Forgot password?
+            </a>
+        @endif
+    </div>
+
+    <button type="submit"
+            class="w-full bg-red-700 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-red-600 transition-colors duration-150 active:scale-[0.98]">
+        Log in
+    </button>
+</form>
+@endsection

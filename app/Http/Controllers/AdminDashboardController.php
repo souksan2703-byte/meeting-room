@@ -2,101 +2,96 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
 use App\Models\Booking;
-use Carbon\Carbon;
+use App\Models\Room;
+use App\Models\User;
+use App\Services\NotificationService;
+use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // เวลาปัจจุบัน
-        $now = Carbon::now();
+        $this->authorizeAdmin($request);
 
-        // วันที่วันนี้
-        $today = $now->toDateString();
+        $search = $request->input('q');
 
-        // เวลาปัจจุบัน
-        $currentTime = $now->format('H:i:s');
+        $bookings = Booking::with(['room', 'user'])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhereHas('room', fn ($r) => $r->where('name', 'like', "%{$search}%"))
+                      ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->orderByDesc('start_time')
+            ->paginate(10)
+            ->withQueryString();
 
-
-        // ==========================================
-        // จำนวนห้องทั้งหมด
-        // ==========================================
-
+        // --- Stat cards ---
         $totalRooms = Room::count();
+        $bookingsToday = Booking::whereDate('start_time', now()->format('Y-m-d'))
+            ->where('status', '!=', 'cancelled')
+            ->count();
+        $bookingsYesterday = Booking::whereDate('start_time', now()->subDay()->format('Y-m-d'))
+            ->where('status', '!=', 'cancelled')
+            ->count();
+        $activeUsers = User::count();
 
+        // จำนวนผู้เข้าร่วมประชุมจริงของวันนี้ (รวมทุกห้อง ไม่นับที่ถูกยกเลิก)
+        $totalAttendeesToday = Booking::whereDate('start_time', now()->format('Y-m-d'))
+            ->where('status', '!=', 'cancelled')
+            ->get()
+            ->sum(fn ($booking) => $booking->attendeesCount());
 
-        // ==========================================
-        // การจองทั้งหมดของวันนี้
-        // ==========================================
+        $stats = [
+            'totalRooms' => $totalRooms,
+            'bookingsToday' => $bookingsToday,
+            'bookingsDelta' => $bookingsToday - $bookingsYesterday,
+            'activeUsers' => $activeUsers,
+            'totalAttendeesToday' => $totalAttendeesToday,
+        ];
 
-        $todayBookings = Booking::whereDate(
-            'booking_date',
-            $today
-        )->count();
+        return view('admin.bookings.index', compact('bookings', 'stats', 'search'));
+    }
 
+    public function approve(Request $request, Booking $booking)
+    {
+        $this->authorizeAdmin($request);
 
-        // ==========================================
-        // ห้องที่กำลังใช้งานอยู่ตอนนี้
-        // start_time <= เวลาปัจจุบัน
-        // end_time   >  เวลาปัจจุบัน
-        // ==========================================
+        $booking->update(['status' => 'confirmed']);
 
-        $usedRoomsToday = Booking::whereDate(
-            'booking_date',
-            $today
-        )
-        ->where('start_time', '<=', $currentTime)
-        ->where('end_time', '>', $currentTime)
-        ->distinct('room_id')
-        ->count('room_id');
-
-
-        // ==========================================
-        // ห้องที่จองแล้ว แต่ยังไม่ถึงเวลาใช้งาน
-        // ==========================================
-
-        $bookedRoomsToday = Booking::whereDate(
-            'booking_date',
-            $today
-        )
-        ->where('start_time', '>', $currentTime)
-        ->distinct('room_id')
-        ->count('room_id');
-
-
-        // ==========================================
-        // ห้องว่างตอนนี้
-        // ==========================================
-
-        $availableRooms = max(
-            $totalRooms - $usedRoomsToday - $bookedRoomsToday,
-            0
+        NotificationService::notifyUser(
+            userId: $booking->user_id,
+            title: 'การจองของคุณได้รับการอนุมัติแล้ว',
+            body: '"' . $booking->title . '" ที่ ' . $booking->room->name . ' ได้รับการยืนยันแล้ว',
+            link: route('bookings.index')
         );
 
+        return back()->with('success', 'อนุมัติการจอง "' . $booking->title . '" เรียบร้อยแล้ว');
+    }
 
-        // ==========================================
-        // รายการจองล่าสุด
-        // ==========================================
+    public function reject(Request $request, Booking $booking)
+    {
+        $this->authorizeAdmin($request);
 
-        $latestBookings = Booking::with('room')
-            ->latest()
-            ->take(5)
-            ->get();
+        $booking->update(['status' => 'cancelled']);
 
+        NotificationService::notifyUser(
+            userId: $booking->user_id,
+            title: 'การจองของคุณถูกปฏิเสธ',
+            body: '"' . $booking->title . '" ที่ ' . $booking->room->name . ' ไม่ได้รับการอนุมัติ',
+            link: route('bookings.index')
+        );
 
-        // ==========================================
-        // ส่งข้อมูลไป Dashboard
-        // ==========================================
+        return back()->with('success', 'ปฏิเสธการจอง "' . $booking->title . '" แล้ว');
+    }
 
-        return view('dashboard.index', compact(
-            'totalRooms',
-            'todayBookings',
-            'usedRoomsToday',
-            'bookedRoomsToday',
-            'availableRooms',
-            'latestBookings'
-        ));
+    /**
+     * เฉพาะ user ที่ role = admin เท่านั้นที่เข้าหน้านี้ได้
+     */
+    private function authorizeAdmin(Request $request): void
+    {
+        abort_unless($request->user()->role === 'admin', 403, 'สำหรับผู้ดูแลระบบเท่านั้น');
     }
 }

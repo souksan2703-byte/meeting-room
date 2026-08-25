@@ -1,607 +1,325 @@
-<!DOCTYPE html>
-<html lang="lo">
-
-<head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Meeting Room Dashboard</title>
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- FullCalendar -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.css" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
-
-    <style>
-        body {
-            background-color: #f5f7fb;
-        }
-
-        .dashboard-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-        }
-
-        .dashboard-card h2 {
-            font-size: 32px;
-            margin-top: 10px;
-        }
-
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .icon-blue {
-            background: #e7f1ff;
-            color: #0d6efd;
-        }
-
-        .icon-red {
-            background: #ffe8e8;
-            color: #dc3545;
-        }
-
-        .icon-green {
-            background: #e8f7ee;
-            color: #198754;
-        }
-
-        .icon-purple {
-            background: #f0e8ff;
-            color: #6f42c1;
-        }
-
-        .calendar-box {
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fafbfc;
-            border-radius: 12px;
-        }
-
-        .empty-booking {
-            text-align: center;
-            padding: 30px;
-            color: #888;
-        }
-
-        /* FullCalendar */
-        #calendar {
-            width: 100%;
-        }
-
-        .fc {
-            font-family: inherit;
-            font-size: 13px;
-        }
-
-        .fc .fc-toolbar {
-            margin-bottom: 12px;
-        }
-
-        .fc .fc-toolbar-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .fc .fc-button {
-            border: none !important;
-            background: #f1f3f5 !important;
-            color: #333 !important;
-            box-shadow: none !important;
-            text-transform: none;
-        }
-
-        .fc .fc-button:hover {
-            background: #e9ecef !important;
-        }
-
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background: #dc3545 !important;
-            color: white !important;
-        }
-
-        .fc .fc-timegrid-slot {
-            height: 55px;
-        }
-
-        .fc .fc-timegrid-axis-cushion {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .fc .fc-col-header-cell-cushion {
-            font-weight: 600;
-            color: #333;
-            padding: 10px 4px;
-        }
-
-        .fc .fc-event {
-            border-radius: 4px;
-            padding: 4px 6px;
-            border-width: 1px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .fc .fc-event-title {
-            font-weight: 600;
-        }
-
-        .fc .fc-timegrid-event {
-            min-height: 35px;
-        }
-
-        .fc .fc-now-indicator-line {
-            border-width: 2px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container-fluid py-4 px-4">
-
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-
-            <div>
-                <h2 class="fw-bold mb-1">
-                    Dashboard
-                </h2>
-
-                <p class="text-muted mb-0">
-                    ໜ້າຈັດການລະບົບຈອງຫ້ອງປະຊຸມ
-                </p>
-            </div>
-
-            <div>
-                <span class="badge bg-primary px-3 py-2">
-                    <i class="bi bi-speedometer2"></i>
-                    Admin
-                </span>
-            </div>
-
-        </div>
-
-
-        <!-- ========================= -->
-        <!-- Statistics Cards -->
-        <!-- ========================= -->
-
-        <div class="row g-4 mb-4">
-
-            <!-- 1. ห้องทั้งหมด -->
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card dashboard-card border-0 h-100">
-
-                    <div class="card-body">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h6 class="text-muted mb-2">
-                                    ຫ້ອງປະຊຸມ
-                                </h6>
-
-                                <h2 class="fw-bold mb-1">
-                                    {{ $totalRooms }}
-                                </h2>
-
-                                <small class="text-muted">
-                                    ຫ້ອງທັງໝົດ
-                                </small>
-
-                            </div>
-
-                            <div class="card-icon icon-blue">
-
-                                <i class="bi bi-building"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- 2. จองแล้ว -->
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card dashboard-card border-0 h-100">
-
-                    <div class="card-body">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h6 class="text-muted mb-2">
-                                    ຈອງແລ້ວ
-                                </h6>
-
-                                <h2 class="fw-bold text-warning mb-1">
-                                    {{ $bookedRoomsToday }}
-                                </h2>
-
-                                <small class="text-muted">
-                                    ຫ້ອງທີ່ຈອງແລ້ວ
-                                </small>
-
-                            </div>
-
-                            <div class="card-icon" style="background:#fff3cd; color:#ffc107;">
-
-                                <i class="bi bi-calendar-check"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- 3. กำลังใช้งาน -->
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card dashboard-card border-0 h-100">
-
-                    <div class="card-body">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h6 class="text-muted mb-2">
-                                    ການໃຊ້ງານ
-                                </h6>
-
-                                <h2 class="fw-bold text-success mb-1">
-                                    {{ $usedRoomsToday }}
-                                </h2>
-
-                                <small class="text-muted">
-                                    ຫ້ອງກຳລັງໃຊ້ງານ
-                                </small>
-
-                            </div>
-
-                            <div class="card-icon icon-green">
-
-                                <i class="bi bi-door-open"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- 4. ห้องว่าง -->
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card dashboard-card border-0 h-100">
-
-                    <div class="card-body">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <div>
-
-                                <h6 class="text-muted mb-2">
-                                    ຫ້ອງວ່າງ
-                                </h6>
-
-                                <h2 class="fw-bold text-primary mb-1">
-                                    {{ $availableRooms }}
-                                </h2>
-
-                                <small class="text-muted">
-                                    ຫ້ອງທີ່ຍັງວ່າງ
-                                </small>
-
-                            </div>
-
-                            <div class="card-icon icon-blue">
-
-                                <i class="bi bi-door-closed"></i>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="row g-4">
-
-            <!-- Calendar -->
-            <div class="col-lg-7">
-
-                <div class="card dashboard-card h-100">
-
-                    <div class="card-header bg-white border-0 pt-4 px-4">
-
-                        <div class="d-flex justify-content-between align-items-center">
-
-                            <h5 class="fw-bold mb-0">
-                                <i class="bi bi-calendar3 text-primary"></i>
-                                Calendar
-                            </h5>
-
-                            <span class="text-muted small">
-                                ຕາຕະລາງການຈອງ
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="card-body p-4">
-
-                        <div id="calendar" style="min-height: 550px;"></div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Latest Bookings -->
-            <div class="col-lg-5">
-
-                <div class="card dashboard-card h-100">
-
-                    <div class="card-header bg-white border-0 pt-4 px-4">
-
-                        <h5 class="fw-bold mb-0">
-                            <i class="bi bi-clock-history text-primary"></i>
-                            ລາຍການຈອງລ່າສຸດ
-                        </h5>
-
-                    </div>
-
-                    <div class="card-body px-4">
-
-                        @if($latestBookings->count() > 0)
-
-                            @foreach($latestBookings as $booking)
-
-                                <div class="border-bottom pb-3 mb-3">
-
-                                    <div class="d-flex justify-content-between">
-
-                                        <strong>
-                                            {{ $booking->room->name ?? 'ບໍ່ພົບຫ້ອງ' }}
-                                        </strong>
-
-                                        @php
-                                            $bookingDate = $booking->booking_date;
-                                            $startTime = $booking->start_time;
-                                            $endTime = $booking->end_time;
-
-                                            $now = \Carbon\Carbon::now();
-
-                                            $start = \Carbon\Carbon::parse(
-                                                $bookingDate . ' ' . $startTime
-                                            );
-
-                                            $end = \Carbon\Carbon::parse(
-                                                $bookingDate . ' ' . $endTime
-                                            );
-                                        @endphp
-
-                                        @if($now->lt($start))
-
-                                            <span class="badge bg-warning text-dark">
-                                                ຈອງແລ້ວ
-                                            </span>
-
-                                        @elseif($now->gte($start) && $now->lt($end))
-
-                                            <span class="badge bg-success">
-                                                ກຳລັງໃຊ້ງານ
-                                            </span>
-
-                                        @else
-
-                                            <span class="badge bg-secondary">
-                                                ສິ້ນສຸດເວລາ
-                                            </span>
-
-                                        @endif
-
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <i class="bi bi-person"></i>
-                                        {{ $booking->booker_name }}
-                                    </div>
-
-                                    <small class="text-muted">
-
-                                        <i class="bi bi-calendar-event"></i>
-                                        {{ $booking->booking_date }}
-
-                                        &nbsp;
-
-                                        <i class="bi bi-clock"></i>
-                                        {{ $booking->start_time }}
-                                        -
-                                        {{ $booking->end_time }}
-
-                                    </small>
-
-                                </div>
-
-                            @endforeach
-
-                        @else
-
-                            <div class="empty-booking">
-
-                                <i class="bi bi-calendar-x fs-1"></i>
-
-                                <h6 class="mt-3">
-                                    ຍັງບໍ່ມີການຈອງ
-                                </h6>
-
-                                <p class="small mb-0">
-                                    ເມື່ອມີການຈອງ
-                                    ຂໍ້ມູນຈະສະແດງຢູ່ບ່ອນນີ້
-                                </p>
-
-                            </div>
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
+@extends('layouts.app')
+
+@section('content')
+<div class="flex items-center justify-between mb-4">
+    <div>
+        <h1 class="text-3xl font-bold">ໜ້າຫຼັກ</h1>
+        <p class="text-gray-500">ປະຕິທິນການໃຊ້ງານຫ້ອງປະຊຸມ</p>
+    </div>
+    <a href="{{ route('rooms.index') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+        + New Booking
+    </a>
+</div>
+
+{{-- View switcher: Day / Week / Month --}}
+<div class="flex items-center justify-between mb-4">
+    <div class="relative flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+        @php $tabs = ['day' => 'ມື້', 'week' => 'ອາທິດ', 'month' => 'ເດືອນ']; $tabKeys = array_keys($tabs); $activeIndex = array_search($view, $tabKeys); @endphp
+        {{-- แถบพื้นหลังสีแดงที่เลื่อนไปมาตาม tab ที่เลือก --}}
+        <div class="absolute top-1 bottom-1 left-1 rounded-lg bg-red-700 shadow-sm transition-transform duration-300 ease-out"
+             style="width: calc((100% - 0.5rem) / 3); transform: translateX(calc({{ $activeIndex }} * 100%));"></div>
+
+        @foreach ($tabs as $key => $label)
+            <a href="{{ route('dashboard', ['view' => $key, 'date' => $selectedDate]) }}"
+               class="relative z-10 px-4 py-2 rounded-lg text-sm font-medium w-24 text-center transition-colors duration-200
+                      {{ $view === $key ? 'text-white' : 'text-gray-600 hover:text-red-700' }}">
+                {{ $label }}
+            </a>
+        @endforeach
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    <div class="flex items-center gap-4 text-sm text-gray-500">
+        <span><span class="inline-block w-2 h-2 rounded-full bg-gray-300 mr-1"></span>ວ່າງ</span>
+        <span><span class="inline-block w-2 h-2 rounded-full bg-red-700 mr-1"></span>ຢືນຢັນແລ້ວ</span>
+        <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1 animate-pulse"></span>ລໍຖ້າອະນຸມັດ</span>
+    </div>
+</div>
 
-            const calendarEl = document.getElementById('calendar');
+{{-- ============== DAY VIEW ============== --}}
+@if ($view === 'day')
+    <div class="animate-fade-in">
+    <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
+        <input type="hidden" name="view" value="day">
+        <a href="{{ route('dashboard', ['view' => 'day', 'date' => \Carbon\Carbon::parse($selectedDate)->subDay()->format('Y-m-d')]) }}"
+           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&lt;</a>
+        <input type="date" name="date" value="{{ $selectedDate }}"
+               onchange="this.form.submit()"
+               class="border rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer">
+        <a href="{{ route('dashboard', ['view' => 'day', 'date' => \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d')]) }}"
+           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&gt;</a>
+    </form>
 
-            if (!calendarEl) {
-                return;
-            }
+    <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+        <div class="min-w-[900px]">
+            <div class="grid border-b" style="grid-template-columns: 220px repeat({{ count($hours) - 1 }}, 1fr);">
+                <div class="p-3 text-xs font-semibold text-gray-500">ຫ້ອງປະຊຸມ</div>
+                @foreach ($hours as $hour)
+                    @if (!$loop->last)
+                        <div class="p-3 text-xs text-gray-500 border-l">{{ sprintf('%02d:00', $hour) }}</div>
+                    @endif
+                @endforeach
+            </div>
 
-            const calendar = new FullCalendar.Calendar(calendarEl, {
+            @foreach ($rooms as $room)
+                <div class="grid border-b relative" style="grid-template-columns: 220px 1fr; min-height: 90px;">
+                    <div class="p-3 border-r">
+                        <a href="{{ route('rooms.show', $room) }}" class="font-semibold hover:underline">{{ $room->name }}</a>
+                        <p class="text-xs text-gray-500 mt-1">{{ $room->capacity }} คน</p>
+                    </div>
 
-                // =========================
-                // รูปแบบ Calendar
-                // =========================
-                initialView: 'timeGridWeek',
+                    <div class="relative">
+                        <div class="absolute inset-0 grid" style="grid-template-columns: repeat({{ count($hours) - 1 }}, 1fr);">
+                            @for ($i = 0; $i < count($hours) - 1; $i++)
+                                <div class="border-l h-full"></div>
+                            @endfor
+                        </div>
 
-                height: 550,
+                        @if ($now->format('Y-m-d') === $selectedDate && $now->hour >= $startHour && $now->hour < $endHour)
+                            @php
+                                $nowLeft = (($now->hour * 60 + $now->minute - $startHour * 60) / (($endHour - $startHour) * 60)) * 100;
+                            @endphp
+                            <div class="absolute top-0 bottom-0 w-px bg-red-500 z-10" style="left: {{ $nowLeft }}%"></div>
+                        @endif
 
-                firstDay: 0,
+                        @foreach ($room->todayBookings as $booking)
+                            <button type="button"
+                               onclick="openBookingModal(this)"
+                               data-title="{{ $booking->title }}"
+                               data-room="{{ $room->name }}"
+                               data-user="{{ $booking->user->name }}"
+                               data-status="{{ $booking->status }}"
+                               data-date="{{ $booking->start_time->format('D, M j, Y') }}"
+                               data-time="{{ $booking->start_time->format('g:i A') }} - {{ $booking->end_time->format('g:i A') }}"
+                               data-attendees="{{ $booking->attendeesCount() }}"
+                               data-description="{{ $booking->description }}"
+                               class="absolute top-2 bottom-2 rounded-md px-3 py-2 text-white text-xs text-left cursor-pointer transition-all duration-150 hover:scale-[1.03] hover:shadow-md hover:z-20
+                                      {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200 animate-pulse' : 'bg-red-700' }}"
+                               style="left: {{ $booking->position['left'] }}%; width: {{ $booking->position['width'] }}%;">
+                                <p class="font-semibold uppercase tracking-wide truncate">
+                                    @if ($booking->status === 'pending') &#9200; ລໍຖ້າອະນຸມັດ @else {{ $booking->title }} @endif
+                                </p>
+                                <p class="truncate">{{ $booking->status === 'pending' ? $booking->title : $booking->user->name }}</p>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    </div>
+@endif
 
-                allDaySlot: false,
+{{-- ============== WEEK VIEW ============== --}}
+@if ($view === 'week')
+    <div class="animate-fade-in">
+    <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
+        <input type="hidden" name="view" value="week">
+        <a href="{{ route('dashboard', ['view' => 'week', 'date' => $weekStart->copy()->subWeek()->format('Y-m-d')]) }}"
+           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&lt;</a>
+        <input type="date" name="date" value="{{ $selectedDate }}"
+               onchange="this.form.submit()"
+               class="border rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer">
+        <span class="text-sm text-gray-500">{{ $weekStart->format('M j') }} - {{ $weekEnd->format('M j, Y') }}</span>
+        <a href="{{ route('dashboard', ['view' => 'week', 'date' => $weekStart->copy()->addWeek()->format('Y-m-d')]) }}"
+           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&gt;</a>
+    </form>
 
-                nowIndicator: true,
+    <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+        <div class="min-w-[1000px]">
+            <div class="grid border-b" style="grid-template-columns: 180px repeat(7, 1fr);">
+                <div class="p-3 text-xs font-semibold text-gray-500">ຫ້ອງປະຊຸມ</div>
+                @foreach ($weekDays as $day)
+                    <div class="p-3 text-xs text-gray-500 border-l text-center {{ $day->isToday() ? 'bg-red-50 text-red-700 font-semibold' : '' }}">
+                        {{ $day->format('D') }}<br>
+                        <span class="text-sm">{{ $day->format('j') }}</span>
+                    </div>
+                @endforeach
+            </div>
 
-                slotMinTime: '07:00:00',
+            @foreach ($rooms as $room)
+                <div class="grid border-b" style="grid-template-columns: 180px repeat(7, 1fr); min-height: 70px;">
+                    <div class="p-3 border-r">
+                        <a href="{{ route('rooms.show', $room) }}" class="font-semibold text-sm hover:underline">{{ $room->name }}</a>
+                    </div>
 
-                slotMaxTime: '18:00:00',
+                    @foreach ($weekDays as $day)
+                        @php
+                            $cellBookings = $weekBookings->get($room->id . '_' . $day->format('Y-m-d'), collect());
+                        @endphp
+                        <div class="border-l p-1.5 space-y-1">
+                            @foreach ($cellBookings as $booking)
+                                <button type="button"
+                                   onclick="openBookingModal(this)"
+                                   data-title="{{ $booking->title }}"
+                                   data-room="{{ $room->name }}"
+                                   data-user="{{ $booking->user->name }}"
+                                   data-status="{{ $booking->status }}"
+                                   data-date="{{ $booking->start_time->format('D, M j, Y') }}"
+                                   data-time="{{ $booking->start_time->format('g:i A') }} - {{ $booking->end_time->format('g:i A') }}"
+                                   data-attendees="{{ $booking->attendeesCount() }}"
+                                   data-description="{{ $booking->description }}"
+                                   class="block w-full text-left rounded px-1.5 py-1 text-[11px] leading-tight truncate cursor-pointer
+                                          {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-red-700 text-white' }}">
+                                    {{ $booking->start_time->format('H:i') }} {{ $booking->title }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @endforeach
+                </div>
+            @endforeach
+        </div>
+    </div>
+    </div>
+@endif
 
-                slotDuration: '01:00:00',
+{{-- ============== MONTH VIEW ============== --}}
+@if ($view === 'month')
+    <div class="animate-fade-in">
+    <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
+        <input type="hidden" name="view" value="month">
+        <a href="{{ route('dashboard', ['view' => 'month', 'date' => $monthCursor->copy()->subMonth()->format('Y-m-d')]) }}"
+           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&lt;</a>
+        <input type="month" name="date" value="{{ $monthCursor->format('Y-m') }}"
+               onchange="this.form.submit()"
+               class="border rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer">
+        <span class="text-sm text-gray-500">{{ $monthCursor->format('F Y') }}</span>
+        <a href="{{ route('dashboard', ['view' => 'month', 'date' => $monthCursor->copy()->addMonth()->format('Y-m-d')]) }}"
+           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&gt;</a>
+    </form>
 
-                scrollTime: '07:00:00',
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="grid grid-cols-7 border-b bg-gray-50">
+            @foreach (['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as $d)
+                <div class="p-2 text-xs font-semibold text-gray-500 text-center">{{ $d }}</div>
+            @endforeach
+        </div>
 
-                expandRows: true,
+        @foreach ($monthWeeks as $week)
+            <div class="grid grid-cols-7 border-b">
+                @foreach ($week as $day)
+                    @php
+                        $dayBookings = $monthBookings->get($day->format('Y-m-d'), collect());
+                        $isCurrentMonth = $day->month === $monthCursor->month;
+                        $dayUrl = route('dashboard', ['view' => 'day', 'date' => $day->format('Y-m-d')]);
+                    @endphp
+                    <div onclick="window.location.href='{{ $dayUrl }}'"
+                         class="border-l p-2 min-h-[100px] cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-300' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
+                        <p class="text-xs font-medium mb-1 {{ $day->isToday() ? 'text-red-700 font-bold' : '' }}">{{ $day->format('j') }}</p>
+                        @foreach ($dayBookings->take(3) as $booking)
+                            <button type="button"
+                               onclick="event.stopPropagation(); openBookingModal(this)"
+                               data-title="{{ $booking->title }}"
+                               data-room="{{ $booking->room->name }}"
+                               data-user="{{ $booking->user->name }}"
+                               data-status="{{ $booking->status }}"
+                               data-date="{{ $booking->start_time->format('D, M j, Y') }}"
+                               data-time="{{ $booking->start_time->format('g:i A') }} - {{ $booking->end_time->format('g:i A') }}"
+                               data-attendees="{{ $booking->attendeesCount() }}"
+                               data-description="{{ $booking->description }}"
+                               class="block w-full text-left text-[10px] truncate rounded px-1 py-0.5 mb-0.5 cursor-pointer
+                                      {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600' : 'bg-red-100 text-red-600' }}">
+                                {{ $booking->start_time->format('H:i') }} {{ $booking->title }}
+                            </button>
+                        @endforeach
+                        @if ($dayBookings->count() > 3)
+                            <p class="text-[10px] text-gray-400">+{{ $dayBookings->count() - 3 }} ລາຍການ</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @endforeach
+    </div>
+    </div>
+@endif
 
-                // =========================
-                // Header
-                // =========================
-                headerToolbar: {
-                    left: 'prev,today,next',
-                    center: 'title',
-                    right: 'timeGridDay,timeGridWeek,dayGridMonth'
-                },
+{{-- ============== BOOKING DETAIL MODAL ============== --}}
+<div id="booking-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeBookingModal()">
+    <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative max-h-[85vh] overflow-y-auto">
+        <button type="button" onclick="closeBookingModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
 
-                // =========================
-                // รูปแบบเวลา
-                // =========================
-                slotLabelFormat: {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                },
+        <span id="modal-status" class="text-xs px-2 py-1 rounded-full font-medium inline-block mb-3"></span>
 
-                eventTimeFormat: {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                },
+        <h3 id="modal-title" class="text-lg font-bold mb-1"></h3>
+        <p id="modal-room" class="text-sm text-gray-500 mb-4"></p>
 
-                // =========================
-                // ข้อมูลจาก Database
-                // =========================
-                events: "{{ route('calendar.events') }}",
+        <div class="bg-gray-50 rounded-lg p-3 text-sm space-y-1.5 mb-4">
+            <p>📅 <span id="modal-date"></span></p>
+            <p>🕐 <span id="modal-time"></span></p>
+            <p>👤 <span id="modal-user"></span></p>
+            <p>👥 <span id="modal-attendees"></span> ຜູ້ເຂົ້າຮ່ວມ</p>
+        </div>
 
-                // =========================
-                // เมื่อคลิกการจอง
-                // =========================
-                eventClick: function (info) {
+        <div id="modal-description-wrap" class="mb-4">
+            <p class="text-xs font-medium text-gray-500 mb-1">ລາຍລະອຽດ</p>
+            <p id="modal-description" class="text-sm text-gray-700"></p>
+        </div>
 
-                    const start = info.event.start
-                        ? info.event.start.toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })
-                        : '';
+        <a href="{{ route('bookings.index') }}" class="block text-center bg-red-700 text-white rounded-lg py-2 text-sm font-medium">
+            ໄປທີ່ My Bookings
+        </a>
+    </div>
+</div>
 
-                    const end = info.event.end
-                        ? info.event.end.toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })
-                        : '';
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.25s ease-out;
+    }
 
-                    alert(
-                        'ລາຍການຈອງ\n\n' +
-                        info.event.title +
-                        '\nເວລາ: ' +
-                        start +
-                        ' - ' +
-                        end
-                    );
-                }
+    @keyframes modalPop {
+        from { opacity: 0; transform: scale(0.95) translateY(8px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    #booking-modal.show-modal > div {
+        animation: modalPop 0.2s ease-out;
+    }
+</style>
 
-            });
+<script>
+    function openBookingModal(btn) {
+        const d = btn.dataset;
 
-            calendar.render();
+        document.getElementById('modal-title').textContent = d.title;
+        document.getElementById('modal-room').textContent = d.room;
+        document.getElementById('modal-date').textContent = d.date;
+        document.getElementById('modal-time').textContent = d.time;
+        document.getElementById('modal-user').textContent = d.user;
+        document.getElementById('modal-attendees').textContent = d.attendees;
 
-        });
+        const statusMap = {
+            confirmed: ['ຢືນຢັນແລ້ວ', 'bg-green-50 text-green-700'],
+            pending: ['ລໍຖ້າອະນຸມັດ', 'bg-yellow-50 text-yellow-700'],
+            cancelled: ['ຍົກເລີກ', 'bg-red-50 text-red-600'],
+        };
+        const [label, cls] = statusMap[d.status] || ['ບໍ່ຮູ້ສະຖານະ', 'bg-gray-100 text-gray-600'];
+        const statusEl = document.getElementById('modal-status');
+        statusEl.textContent = label;
+        statusEl.className = 'text-xs px-2 py-1 rounded-full font-medium inline-block mb-3 ' + cls;
 
-    </script>
+        const descWrap = document.getElementById('modal-description-wrap');
+        if (d.description && d.description.trim() !== '') {
+            document.getElementById('modal-description').textContent = d.description;
+            descWrap.classList.remove('hidden');
+        } else {
+            descWrap.classList.add('hidden');
+        }
 
-</body>
+        const modal = document.getElementById('booking-modal');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => modal.classList.add('show-modal'));
+    }
 
-</html>
+    function closeBookingModal() {
+        const modal = document.getElementById('booking-modal');
+        modal.classList.remove('show-modal');
+        modal.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeBookingModal();
+    });
+</script>
+@endsection
