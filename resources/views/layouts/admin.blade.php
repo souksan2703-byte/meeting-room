@@ -21,14 +21,17 @@
                   transform -translate-x-full md:translate-x-0 transition-transform duration-200">
         <div class="overflow-y-auto">
             <div class="p-4">
-                <a href="{{ route('rooms.index') }}"
+                <a href="{{ route('admin.rooms.create') }}"
                    class="block text-center bg-red-700 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-red-600">
-                    + New Booking
+                    + Add New Room
                 </a>
             </div>
 
             <nav class="px-3 space-y-1">
-                
+                <a href="{{ route('admin.rooms.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 hover:translate-x-1 {{ request()->routeIs('admin.rooms.*') ? 'bg-red-50 text-red-700' : 'text-gray-500 hover:bg-gray-50' }}">
+                    🏢 Rooms
+                </a>
                 <a href="{{ route('admin.bookings.index') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 hover:translate-x-1 {{ request()->routeIs('admin.bookings.*') ? 'bg-red-50 text-red-700' : 'text-gray-500 hover:bg-gray-50' }}">
                     📅 Bookings
@@ -44,7 +47,11 @@
             </nav>
         </div>
 
-        
+        <div class="p-3 border-t border-gray-100">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all duration-150 hover:translate-x-1">
+                ⚙️ Back to Dashboard
+            </a>
+        </div>
     </aside>
 
     {{-- Main content --}}

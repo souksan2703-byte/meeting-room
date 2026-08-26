@@ -134,39 +134,6 @@
         width: 100%;
     }
 
-    /* ===== Page transition: fade-in ตอนโหลดหน้าเสร็จ =====
-       ใช้ CSS animation ล้วนๆ เล่นอัตโนมัติทันทีที่ body render
-       (ไม่ตั้ง opacity:0 เป็นค่าเริ่มต้น เพื่อกันไม่ให้ขึ้นจอขาวว่างก่อน) */
-    body {
-        animation: pageFadeIn 0.3s ease-out;
-    }
-
-    @keyframes pageFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(6px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    body.page-leaving {
-        animation: pageFadeOut 0.12s ease-in forwards;
-    }
-
-    @keyframes pageFadeOut {
-        from {
-            opacity: 1;
-        }
-
-        to {
-            opacity: 0;
-        }
-    }
-
     /* ===== แถบ loading บางๆ ด้านบน (แบบ YouTube/GitHub) ===== */
     #top-loader {
         position: fixed;
@@ -205,14 +172,6 @@
         setTimeout(() => loader.classList.remove('done'), 300);
     }
 
-    function restartFadeIn() {
-        document.body.classList.remove('page-leaving');
-        // force reflow เพื่อให้ CSS animation เล่นใหม่ได้ (ปกติ animation จะเล่นแค่ครั้งเดียวตอน element ถูกสร้าง)
-        document.body.style.animation = 'none';
-        void document.body.offsetHeight;
-        document.body.style.animation = '';
-    }
-
     // เรียก re-execute <script> ทุกตัวในเนื้อหาใหม่ (ยกเว้นตัวนี้เอง เพราะ listener ผูกกับ document อยู่แล้วไม่ต้องผูกซ้ำ)
     function reExecuteScripts(container) {
         container.querySelectorAll('script').forEach(oldScript => {
@@ -226,7 +185,6 @@
 
     async function navigateTo(url) {
         document.getElementById('top-loader').classList.add('loading');
-        document.body.classList.add('page-leaving'); // เริ่ม fade-out หน้าเดิม (แต่ยังอยู่บนจอ ไม่ใช่จอขาว)
 
         try {
             const res = await fetch(url, {
@@ -244,9 +202,6 @@
             const html = await res.text();
             const newDoc = new DOMParser().parseFromString(html, 'text/html');
 
-            // รอให้ fade-out เล่นจบสั้นๆ ก่อนสลับเนื้อหา (กันกระตุก)
-            await new Promise(resolve => setTimeout(resolve, 120));
-
             document.title = newDoc.title;
             document.body.innerHTML = newDoc.body.innerHTML;
             window.history.pushState({
@@ -255,7 +210,6 @@
             window.scrollTo(0, 0);
 
             reExecuteScripts(document.body);
-            restartFadeIn();
             finishTransition();
         } catch (err) {
             // fetch ล้มเหลว (เช่นเน็ตหลุด) -> fallback ไปโหลดหน้าจริงแบบปกติ
@@ -290,7 +244,6 @@
     // ดักการ submit ฟอร์ม (จองห้อง, login, filter) ให้ fade-out ก่อนเช่นกัน — ฟอร์มยัง submit แบบปกติ
     document.addEventListener('submit', function() {
         document.getElementById('top-loader').classList.add('loading');
-        document.body.classList.add('page-leaving');
     });
 
     function toggleMobileMenu() {
