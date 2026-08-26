@@ -68,7 +68,31 @@ class AdminDashboardController extends Controller
             link: route('bookings.index')
         );
 
-        return back()->with('success', 'อนุมัติการจอง "' . $booking->title . '" เรียบร้อยแล้ว');
+        // คำขออื่นที่ยังเป็น Pending และชนช่วงเวลาเดียวกันในห้องเดียวกัน ถือว่าตกไปโดยอัตโนมัติ
+        $competingBookings = Booking::where('room_id', $booking->room_id)
+            ->where('id', '!=', $booking->id)
+            ->where('status', 'pending')
+            ->where('start_time', '<', $booking->end_time)
+            ->where('end_time', '>', $booking->start_time)
+            ->get();
+
+        foreach ($competingBookings as $competing) {
+            $competing->update(['status' => 'cancelled']);
+
+            NotificationService::notifyUser(
+                userId: $competing->user_id,
+                title: 'การจองของคุณไม่ได้รับการอนุมัติ',
+                body: '"' . $competing->title . '" ที่ ' . $competing->room->name . ' ช่วงเวลานี้ถูกอนุมัติให้ผู้อื่นไปแล้ว',
+                link: route('bookings.index')
+            );
+        }
+
+        $message = 'อนุมัติการจอง "' . $booking->title . '" เรียบร้อยแล้ว';
+        if ($competingBookings->isNotEmpty()) {
+            $message .= ' และปฏิเสธคำขออื่นที่ชนเวลาเดียวกันอีก ' . $competingBookings->count() . ' รายการโดยอัตโนมัติ';
+        }
+
+        return back()->with('success', $message);
     }
 
     public function reject(Request $request, Booking $booking)

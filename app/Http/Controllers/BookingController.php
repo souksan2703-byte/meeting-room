@@ -72,9 +72,10 @@ class BookingController extends Controller
         $start = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
         $end = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
 
-        // Prevent double-booking the same room/time
+        // กันชนเฉพาะกับห้องที่ "อนุมัติแล้ว" (Confirmed) เท่านั้น — ถ้ายังเป็น Pending
+        // หลายคนยื่นคำขอจองช่วงเวลาเดียวกันได้ ให้ Admin เป็นคนตัดสินใจว่าจะให้ใครได้ห้องไป
         $overlaps = $room->bookings()
-            ->where('status', '!=', 'cancelled')
+            ->where('status', 'confirmed')
             ->where('start_time', '<', $end)
             ->where('end_time', '>', $start)
             ->exists();
@@ -82,7 +83,7 @@ class BookingController extends Controller
         if ($overlaps) {
             return back()
                 ->withInput()
-                ->withErrors(['start_time' => 'This room is already booked for part of that time range.']);
+                ->withErrors(['start_time' => 'ห้องนี้ถูกอนุมัติให้คนอื่นในช่วงเวลาดังกล่าวไปแล้ว']);
         }
 
         $booking = Booking::create([
@@ -139,10 +140,11 @@ class BookingController extends Controller
         $newStart = Carbon::parse($validated['date'] . ' ' . $validated['start_time']);
         $newEnd = Carbon::parse($validated['date'] . ' ' . $validated['end_time']);
 
-        // เช็คว่าเวลาที่แก้ไขใหม่ไปทับกับ booking อื่นในห้องเดียวกันหรือไม่ (ไม่นับตัวเองและที่ยกเลิกไปแล้ว)
+        // เช็คว่าเวลาที่แก้ไขใหม่ไปทับกับ booking ที่ "อนุมัติแล้ว" (Confirmed) ของคนอื่นหรือไม่
+        // (ยังคงให้ทับกับคำขอที่ยัง Pending ได้ ให้ Admin ตัดสินใจ)
         $overlaps = $booking->room->bookings()
             ->where('id', '!=', $booking->id)
-            ->where('status', '!=', 'cancelled')
+            ->where('status', 'confirmed')
             ->where('start_time', '<', $newEnd)
             ->where('end_time', '>', $newStart)
             ->exists();
@@ -150,7 +152,7 @@ class BookingController extends Controller
         if ($overlaps) {
             return back()
                 ->withInput()
-                ->withErrors(['start_time' => 'ห้องนี้ถูกจองในช่วงเวลาดังกล่าวไปแล้ว']);
+                ->withErrors(['start_time' => 'ห้องนี้ถูกอนุมัติให้คนอื่นในช่วงเวลาดังกล่าวไปแล้ว']);
         }
 
         $booking->update([
