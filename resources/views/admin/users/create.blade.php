@@ -4,7 +4,7 @@
 <div class="max-w-lg">
     <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500">&larr; ກັບໄປຫາຜູ້ໃຊ້</a>
 
-    <h1 class="text-2xl font-bold mt-2 mb-1">ເພີ່ມຜູ້ໃຊ້ໃໝ່</h1>
+    <h1 class="text-2xl font-bold mt-2 mb-1">ເພີ່ມຜູ້ໃຊ້ໃໝ່1</h1>
     <p class="text-gray-500 mb-6">สร้างบัญชีให้พนักงานใหม่ (ไม่ต้องเปิดให้สมัครเองสาธารณะ)</p>
 
     @if ($errors->any())
