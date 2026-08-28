@@ -25,13 +25,13 @@ class RoomController extends Controller
         // ช่องที่มีแค่คำขอ Pending ยังเปิดให้คนอื่นยื่นคำขอซ้อนได้ ให้ Admin เป็นคนตัดสินใจ
         $confirmedBookings = $allBookings->where('status', 'confirmed');
 
-        // Build 30-min slots between 09:00 and 13:30 (mirrors the mock; adjust as needed)
+        // Build 30-min slots between 08:00 and 18:00
         $slots = [];
-        $slotStart = Carbon::parse($date)->setTime(9, 0);
-        $slotEnd = Carbon::parse($date)->setTime(13, 30);
+        $slotStart = Carbon::parse($date)->setTime(8, 0);
+        $slotEnd = Carbon::parse($date)->setTime(18, 0);
 
         while ($slotStart->lte($slotEnd)) {
-            $slotFinish = $slotStart->copy()->addMinutes(30);
+            $slotFinish = $slotStart->copy()->addHour();
 
             $isBooked = $confirmedBookings->contains(function ($booking) use ($slotStart, $slotFinish) {
                 return $slotStart->lt($booking->end_time) && $slotFinish->gt($booking->start_time);
@@ -43,7 +43,7 @@ class RoomController extends Controller
                 'available' => !$isBooked,
             ];
 
-            $slotStart->addMinutes(30);
+            $slotStart->addHour();
         }
 
         $isAvailableNow = !$confirmedBookings->contains(function ($booking) {

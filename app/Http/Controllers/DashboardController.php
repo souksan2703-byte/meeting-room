@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    // Visible timeline window (matches the mock: 09:00 - 18:00)
-    private int $startHour = 9;
+    // Visible timeline window (matches the mock: 08:00 - 18:00)
+    private int $startHour = 8;
     private int $endHour = 18;
 
     public function index(Request $request)
@@ -38,15 +38,45 @@ class DashboardController extends Controller
     }
 
     /**
-     * DAY VIEW — timeline grid ต่อห้อง แสดงชั่วโมง 09:00-18:00 (ของเดิม)
+     * DAY VIEW — timeline grid ต่อห้อง แสดงชั่วโมง 08:00-18:00
+     * รองรับการจองที่เวลาชนกัน (เช่น หลายคนขอห้องเดียวกันรอ Admin อนุมัติ)
+     * โดยเรียงบล็อกที่ชนกันซ้อนกันลงมาเป็นแถว (lane) แทนที่จะทับกัน
      */
     private function buildDayView($rooms, string $date): array
     {
-        $rooms->each(function (Room $room) use ($date) {
-            $bookings = $room->bookingsForDate($date)->map(function ($booking) {
+        $maxLanesOverall = 1;
+
+        $rooms->each(function (Room $room) use ($date, &$maxLanesOverall) {
+            $bookings = $room->bookingsForDate($date)
+                ->sortBy('start_time')
+                ->values();
+
+            // จัดเรียงบล็อกที่เวลาชนกันให้อยู่คนละ "lane" (แถวย่อย) ไม่ทับกัน
+            $laneEndTimes = []; // lane index => เวลาสิ้นสุดล่าสุดของ lane นั้น
+            $bookings = $bookings->map(function ($booking) use (&$laneEndTimes) {
+                $assignedLane = null;
+
+                foreach ($laneEndTimes as $lane => $endTime) {
+                    if ($booking->start_time->gte($endTime)) {
+                        $assignedLane = $lane;
+                        break;
+                    }
+                }
+
+                if ($assignedLane === null) {
+                    $assignedLane = count($laneEndTimes);
+                }
+
+                $laneEndTimes[$assignedLane] = $booking->end_time;
+                $booking->lane = $assignedLane;
                 $booking->position = $this->calculatePosition($booking->start_time, $booking->end_time);
+
                 return $booking;
             });
+
+            $room->laneCount = max(1, count($laneEndTimes));
+            $maxLanesOverall = max($maxLanesOverall, $room->laneCount);
+
             $room->setRelation('todayBookings', $bookings);
         });
 
@@ -54,6 +84,7 @@ class DashboardController extends Controller
             'hours' => range($this->startHour, $this->endHour),
             'startHour' => $this->startHour,
             'endHour' => $this->endHour,
+            'laneHeight' => 68, // ความสูงต่อ 1 แถวการจอง (px) — พอสำหรับ 3 บรรทัด (ชื่อ, ผู้จอง, เวลา)
         ];
     }
 

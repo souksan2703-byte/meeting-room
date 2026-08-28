@@ -61,13 +61,17 @@
             </div>
 
             @foreach ($rooms as $room)
-                <div class="grid border-b relative" style="grid-template-columns: 220px 1fr; min-height: 90px;">
+                @php $rowHeight = max(90, $room->laneCount * $laneHeight + 16); @endphp
+                <div class="grid border-b relative" style="grid-template-columns: 220px 1fr; min-height: {{ $rowHeight }}px;">
                     <div class="p-3 border-r">
                         <a href="{{ route('rooms.show', $room) }}" class="font-semibold hover:underline">{{ $room->name }}</a>
                         <p class="text-xs text-gray-500 mt-1">{{ $room->capacity }} คน</p>
+                        @if ($room->laneCount > 1)
+                            <p class="text-[10px] text-red-500 mt-1">⚠ มี {{ $room->laneCount }} คำขอชนเวลากัน</p>
+                        @endif
                     </div>
 
-                    <div class="relative">
+                    <div class="relative" style="height: {{ $rowHeight }}px;">
                         <div class="absolute inset-0 grid" style="grid-template-columns: repeat({{ count($hours) - 1 }}, 1fr);">
                             @for ($i = 0; $i < count($hours) - 1; $i++)
                                 <div class="border-l h-full"></div>
@@ -82,6 +86,10 @@
                         @endif
 
                         @foreach ($room->todayBookings as $booking)
+                            @php
+                                $blockTop = $booking->lane * $laneHeight + 4;
+                                $blockHeight = $laneHeight - 8;
+                            @endphp
                             <button type="button"
                                onclick="openBookingModal(this)"
                                data-title="{{ $booking->title }}"
@@ -92,14 +100,14 @@
                                data-time="{{ $booking->start_time->format('g:i A') }} - {{ $booking->end_time->format('g:i A') }}"
                                data-attendees="{{ $booking->attendeesCount() }}"
                                data-description="{{ $booking->description }}"
-                               class="absolute top-2 bottom-2 rounded-md px-3 py-2 text-white text-xs text-left cursor-pointer transition-all duration-150 hover:scale-[1.03] hover:shadow-md hover:z-20
+                               class="absolute rounded-md px-3 py-1.5 text-white text-xs text-left cursor-pointer transition-all duration-150 hover:scale-[1.02] hover:shadow-md hover:z-20 overflow-hidden
                                       {{ $booking->status === 'pending' ? 'bg-red-50 text-red-600 border border-red-200 animate-pulse' : 'bg-red-700' }}"
-                               style="left: {{ $booking->position['left'] }}%; width: {{ $booking->position['width'] }}%;">
-                                <p class="font-semibold uppercase tracking-wide truncate">
+                               style="left: {{ $booking->position['left'] }}%; width: {{ $booking->position['width'] }}%; top: {{ $blockTop }}px; height: {{ $blockHeight }}px;">
+                                <p class="font-semibold uppercase tracking-wide truncate leading-tight">
                                     @if ($booking->status === 'pending') &#9200; PENDING @else {{ $booking->title }} @endif
                                 </p>
-                                <p class="truncate">{{ $booking->status === 'pending' ? $booking->title : $booking->user->name }}</p>
-                                <p class="truncate opacity-80 text-[10px]">{{ $booking->start_time->format('H:i') }} - {{ $booking->end_time->format('H:i') }}</p>
+                                <p class="truncate leading-tight">{{ $booking->status === 'pending' ? $booking->title : $booking->user->name }}</p>
+                                <p class="truncate opacity-80 text-[10px] leading-tight">{{ $booking->start_time->format('H:i') }} - {{ $booking->end_time->format('H:i') }}</p>
                             </button>
                         @endforeach
                     </div>
