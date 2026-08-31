@@ -1,10 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+@if (session('success'))
+    <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3 mb-4">{{ session('success') }}</div>
+@endif
+
 <div class="flex items-center justify-between mb-4">
     <div>
         <h1 class="text-3xl font-bold">Dashboard</h1>
-        <p class="text-gray-500">Room Availability Calendar</p>
+        <p class="text-gray-700">Room Availability Calendar</p>
     </div>
     <a href="{{ route('rooms.index') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
         + New Booking
@@ -28,7 +32,7 @@
         @endforeach
     </div>
 
-    <div class="flex items-center gap-4 text-sm text-gray-500">
+    <div class="flex items-center gap-4 text-sm text-gray-700">
         <span><span class="inline-block w-2 h-2 rounded-full bg-gray-300 mr-1"></span>Available</span>
         <span><span class="inline-block w-2 h-2 rounded-full bg-red-700 mr-1"></span>Confirmed</span>
         <span><span class="inline-block w-2 h-2 rounded-full bg-red-400 mr-1 animate-pulse"></span>Pending</span>
@@ -41,21 +45,21 @@
     <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
         <input type="hidden" name="view" value="day">
         <a href="{{ route('dashboard', ['view' => 'day', 'date' => \Carbon\Carbon::parse($selectedDate)->subDay()->format('Y-m-d')]) }}"
-           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&lt;</a>
+           class="border rounded-lg px-3 py-1.5 text-gray-700 hover:text-red-700">&lt;</a>
         <input type="date" name="date" value="{{ $selectedDate }}"
                onchange="this.form.submit()"
                class="border rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer">
         <a href="{{ route('dashboard', ['view' => 'day', 'date' => \Carbon\Carbon::parse($selectedDate)->addDay()->format('Y-m-d')]) }}"
-           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&gt;</a>
+           class="border rounded-lg px-3 py-1.5 text-gray-700 hover:text-red-700">&gt;</a>
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
         <div class="min-w-[900px]">
             <div class="grid border-b" style="grid-template-columns: 220px repeat({{ count($hours) - 1 }}, 1fr);">
-                <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
+                <div class="p-3 text-xs font-semibold text-gray-700">ROOMS</div>
                 @foreach ($hours as $hour)
                     @if (!$loop->last)
-                        <div class="p-3 text-xs text-gray-500 border-l">{{ sprintf('%02d:00', $hour) }}</div>
+                        <div class="p-3 text-xs text-gray-700 border-l">{{ sprintf('%02d:00', $hour) }}</div>
                     @endif
                 @endforeach
             </div>
@@ -65,9 +69,9 @@
                 <div class="grid border-b relative" style="grid-template-columns: 220px 1fr; min-height: {{ $rowHeight }}px;">
                     <div class="p-3 border-r">
                         <a href="{{ route('rooms.show', $room) }}" class="font-semibold hover:underline">{{ $room->name }}</a>
-                        <p class="text-xs text-gray-500 mt-1">{{ $room->capacity }} ຄົນ</p>
+                        <p class="text-xs text-gray-700 mt-1">{{ $room->capacity }} คน</p>
                         @if ($room->laneCount > 1)
-                            <p class="text-[10px] text-red-500 mt-1">⚠ มี {{ $room->laneCount }} ເວລາຈອງຫ້ອງປູຊຸມຕຳກັນ</p>
+                            <p class="text-[10px] text-red-500 mt-1">⚠ มี {{ $room->laneCount }} คำขอชนเวลากัน</p>
                         @endif
                     </div>
 
@@ -124,21 +128,21 @@
     <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
         <input type="hidden" name="view" value="week">
         <a href="{{ route('dashboard', ['view' => 'week', 'date' => $weekStart->copy()->subWeek()->format('Y-m-d')]) }}"
-           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&lt;</a>
+           class="border rounded-lg px-3 py-1.5 text-gray-700 hover:text-red-700">&lt;</a>
         <input type="date" name="date" value="{{ $selectedDate }}"
                onchange="this.form.submit()"
                class="border rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer">
-        <span class="text-sm text-gray-500">{{ $weekStart->format('M j') }} - {{ $weekEnd->format('M j, Y') }}</span>
+        <span class="text-sm text-gray-700">{{ $weekStart->format('M j') }} - {{ $weekEnd->format('M j, Y') }}</span>
         <a href="{{ route('dashboard', ['view' => 'week', 'date' => $weekStart->copy()->addWeek()->format('Y-m-d')]) }}"
-           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&gt;</a>
+           class="border rounded-lg px-3 py-1.5 text-gray-700 hover:text-red-700">&gt;</a>
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
         <div class="min-w-[1000px]">
             <div class="grid border-b" style="grid-template-columns: 180px repeat(7, 1fr);">
-                <div class="p-3 text-xs font-semibold text-gray-500">ROOMS</div>
+                <div class="p-3 text-xs font-semibold text-gray-700">ROOMS</div>
                 @foreach ($weekDays as $day)
-                    <div class="p-3 text-xs text-gray-500 border-l text-center {{ $day->isToday() ? 'bg-red-50 text-red-700 font-semibold' : '' }}">
+                    <div class="p-3 text-xs text-gray-700 border-l text-center {{ $day->isToday() ? 'bg-red-50 text-red-700 font-semibold' : '' }}">
                         {{ $day->format('D') }}<br>
                         <span class="text-sm">{{ $day->format('j') }}</span>
                     </div>
@@ -188,19 +192,19 @@
     <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 mb-4">
         <input type="hidden" name="view" value="month">
         <a href="{{ route('dashboard', ['view' => 'month', 'date' => $monthCursor->copy()->subMonth()->format('Y-m-d')]) }}"
-           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&lt;</a>
+           class="border rounded-lg px-3 py-1.5 text-gray-700 hover:text-red-700">&lt;</a>
         <input type="month" name="date" value="{{ $monthCursor->format('Y-m') }}"
                onchange="this.form.submit()"
                class="border rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer">
-        <span class="text-sm text-gray-500">{{ $monthCursor->format('F Y') }}</span>
+        <span class="text-sm text-gray-700">{{ $monthCursor->format('F Y') }}</span>
         <a href="{{ route('dashboard', ['view' => 'month', 'date' => $monthCursor->copy()->addMonth()->format('Y-m-d')]) }}"
-           class="border rounded-lg px-3 py-1.5 text-gray-500 hover:text-red-700">&gt;</a>
+           class="border rounded-lg px-3 py-1.5 text-gray-700 hover:text-red-700">&gt;</a>
     </form>
 
     <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="grid grid-cols-7 border-b bg-gray-50">
             @foreach (['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] as $d)
-                <div class="p-2 text-xs font-semibold text-gray-500 text-center">{{ $d }}</div>
+                <div class="p-2 text-xs font-semibold text-gray-700 text-center">{{ $d }}</div>
             @endforeach
         </div>
 
@@ -213,7 +217,7 @@
                         $dayUrl = route('dashboard', ['view' => 'day', 'date' => $day->format('Y-m-d')]);
                     @endphp
                     <div onclick="window.location.href='{{ $dayUrl }}'"
-                         class="border-l p-2 min-h-[100px] cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-300' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
+                         class="border-l p-2 min-h-[100px] cursor-pointer hover:bg-gray-50 {{ !$isCurrentMonth ? 'bg-gray-50 text-gray-500' : '' }} {{ $day->isToday() ? 'bg-red-50' : '' }}">
                         <p class="text-xs font-medium mb-1 {{ $day->isToday() ? 'text-red-700 font-bold' : '' }}">{{ $day->format('j') }}</p>
                         @foreach ($dayBookings->take(3) as $booking)
                             <button type="button"
@@ -232,7 +236,7 @@
                             </button>
                         @endforeach
                         @if ($dayBookings->count() > 3)
-                            <p class="text-[10px] text-gray-400">+{{ $dayBookings->count() - 3 }} more</p>
+                            <p class="text-[10px] text-gray-600">+{{ $dayBookings->count() - 3 }} more</p>
                         @endif
                     </div>
                 @endforeach
@@ -245,27 +249,27 @@
 {{-- ============== BOOKING DETAIL MODAL ============== --}}
 <div id="booking-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onclick="if(event.target===this) closeBookingModal()">
     <div class="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative max-h-[85vh] overflow-y-auto">
-        <button type="button" onclick="closeBookingModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+        <button type="button" onclick="closeBookingModal()" class="absolute top-3 right-3 text-gray-600 hover:text-gray-600 text-lg leading-none">✕</button>
 
         <span id="modal-status" class="text-xs px-2 py-1 rounded-full font-medium inline-block mb-3"></span>
 
         <h3 id="modal-title" class="text-lg font-bold mb-1"></h3>
-        <p id="modal-room" class="text-sm text-gray-500 mb-4"></p>
+        <p id="modal-room" class="text-sm text-gray-700 mb-4"></p>
 
         <div class="bg-gray-50 rounded-lg p-3 text-sm space-y-1.5 mb-4">
             <p>📅 <span id="modal-date"></span></p>
             <p>🕐 <span id="modal-time"></span></p>
             <p>👤 <span id="modal-user"></span></p>
-            <p>👥 <span id="modal-attendees"></span> ຜູ້ເຂົ້າຮ່ວມ</p>
+            <p>👥 <span id="modal-attendees"></span> ผู้เข้าร่วม</p>
         </div>
 
         <div id="modal-description-wrap" class="mb-4">
-            <p class="text-xs font-medium text-gray-500 mb-1">ລາຍລະອຽດ</p>
+            <p class="text-xs font-medium text-gray-700 mb-1">รายละเอียด</p>
             <p id="modal-description" class="text-sm text-gray-700"></p>
         </div>
 
         <a href="{{ route('bookings.index') }}" class="block text-center bg-red-700 text-white rounded-lg py-2 text-sm font-medium">
-            ໄປທີ່ My Bookings
+            ไปที่ My Bookings
         </a>
     </div>
 </div>

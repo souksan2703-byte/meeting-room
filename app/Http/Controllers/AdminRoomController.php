@@ -31,7 +31,7 @@ class AdminRoomController extends Controller
 
         Room::create($validated);
 
-        return redirect()->route('admin.rooms.index')->with('success', 'เพิ่มห้อง "' . $validated['name'] . '" เรียบร้อยแล้ว');
+        return redirect()->route('admin.rooms.index')->with('success', 'เເພີ່ມຫ້ອງ "' . $validated['name'] . '" ສຳເລັດແລ້ວ');
     }
 
     public function edit(Request $request, Room $room)
@@ -49,7 +49,7 @@ class AdminRoomController extends Controller
 
         $room->update($validated);
 
-        return redirect()->route('admin.rooms.index')->with('success', 'บันทึกการแก้ไข "' . $room->name . '" เรียบร้อยแล้ว');
+        return redirect()->route('admin.rooms.index')->with('success', 'ແກ້ໄຂ "' . $room->name . '" ສຳເລັດແລ້ວ');
     }
 
     public function destroy(Request $request, Room $room)
@@ -59,7 +59,7 @@ class AdminRoomController extends Controller
         $name = $room->name;
         $room->delete(); // การจองในห้องนี้ทั้งหมดจะถูกลบตามไปด้วย (cascade)
 
-        return redirect()->route('admin.rooms.index')->with('success', 'ลบห้อง "' . $name . '" เรียบร้อยแล้ว');
+        return redirect()->route('admin.rooms.index')->with('success', 'ລຶບຫ້ອງ "' . $name . '" ສຳເລັດແລ້ວ');
     }
 
     private function validateRoom(Request $request): array
@@ -87,6 +87,6 @@ class AdminRoomController extends Controller
 
     private function authorizeAdmin(Request $request): void
     {
-        abort_unless($request->user()->role === 'admin', 403, 'สำหรับผู้ดูแลระบบเท่านั้น');
+        abort_unless($request->user()->role === 'admin', 403, 'ສຳລັບຜູ້ເບິ່ງແຍງລະບົບເທົ່ານັ້ນ');
     }
 }

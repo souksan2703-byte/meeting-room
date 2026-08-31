@@ -63,8 +63,8 @@ class AdminDashboardController extends Controller
 
         NotificationService::notifyUser(
             userId: $booking->user_id,
-            title: 'การจองของคุณได้รับการอนุมัติแล้ว',
-            body: '"' . $booking->title . '" ที่ ' . $booking->room->name . ' ได้รับการยืนยันแล้ว',
+            title: 'ການຈອງຂອງທ່ານໄດ້ຮັບການອະນຸມັດ',
+            body: '"' . $booking->title . '" ທີ່ ' . $booking->room->name . ' ຢືນຢັນແລ້ວ',
             link: route('bookings.index')
         );
 
@@ -81,15 +81,15 @@ class AdminDashboardController extends Controller
 
             NotificationService::notifyUser(
                 userId: $competing->user_id,
-                title: 'การจองของคุณไม่ได้รับการอนุมัติ',
-                body: '"' . $competing->title . '" ที่ ' . $competing->room->name . ' ช่วงเวลานี้ถูกอนุมัติให้ผู้อื่นไปแล้ว',
+                title: 'ການຈອງຂອງທ່ານບໍ່ໄດ້ຮັບການອະນຸມັດ',
+                body: '"' . $competing->title . '" ທີ່ ' . $competing->room->name . ' ຊ່ວງເວລານີ້ໄດ້ຖືກມອບໃຫ້ຄົນອື່ນແລ້ວ',
                 link: route('bookings.index')
             );
         }
 
-        $message = 'อนุมัติการจอง "' . $booking->title . '" เรียบร้อยแล้ว';
+        $message = 'ອະນຸມັດການຈອງແລ້ວ "' . $booking->title . '" ສຳເລັດແລ້ວ';
         if ($competingBookings->isNotEmpty()) {
-            $message .= ' และปฏิเสธคำขออื่นที่ชนเวลาเดียวกันอีก ' . $competingBookings->count() . ' รายการโดยอัตโนมัติ';
+            $message .= ' ແລະມັນຍັງໄດ້ປະຕິເສດຄຳຂໍອີກອັນໜຶ່ງທີ່ເກີດຂຶ້ນໃນເວລາດຽວກັນ. ' . $competingBookings->count() . 'ລາຍຊື່ອັດຕະໂນມັດ';
         }
 
         return back()->with('success', $message);
@@ -103,19 +103,19 @@ class AdminDashboardController extends Controller
 
         NotificationService::notifyUser(
             userId: $booking->user_id,
-            title: 'การจองของคุณถูกปฏิเสธ',
-            body: '"' . $booking->title . '" ที่ ' . $booking->room->name . ' ไม่ได้รับการอนุมัติ',
+            title: 'ການຈອງຂອງທ່ານບໍ່ໄດ້ຮັບການອະນຸມັດ',
+            body: '"' . $booking->title . '" ທີ່ ' . $booking->room->name . ' ບໍ່ໄດ້ຮັບການອະນຸມັດ',
             link: route('bookings.index')
         );
 
-        return back()->with('success', 'ปฏิเสธการจอง "' . $booking->title . '" แล้ว');
+        return back()->with('success', 'ການຈອງຖືກປະຕິເສດ "' . $booking->title . '" ສຳເລັດແລ້ວ');
     }
 
     /**
-     * เฉพาะ user ที่ role = admin เท่านั้นที่เข้าหน้านี้ได้
+     * เฉพาะ user ที่ role = admin ເທົ່ານັ້ນທี่เข้าหน้านี้ได้
      */
     private function authorizeAdmin(Request $request): void
     {
-        abort_unless($request->user()->role === 'admin', 403, 'สำหรับผู้ดูแลระบบเท่านั้น');
+        abort_unless($request->user()->role === 'admin', 403, 'ສຳລັບຜູ້ເບິ່ງແຍງລະບົບເທົ່ານັ້ນ');
     }
 }

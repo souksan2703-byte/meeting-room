@@ -71,13 +71,13 @@ class AdminUserController extends Controller
         if ($user->role === 'admin' && $validated['role'] !== 'admin') {
             $adminCount = User::where('role', 'admin')->count();
             if ($adminCount <= 1) {
-                return back()->withErrors(['role' => 'ต้องมี Admin เหลืออย่างน้อย 1 คนในระบบเสมอ']);
+                return back()->withErrors(['role' => 'ຕ້ອງມີ Admin ຢ່າງໜ້ອຍໜຶ່ງຄົນຢູ່ໃນລະບົບສະເໝີ.']);
             }
         }
 
         $user->update(['role' => $validated['role']]);
 
-        return back()->with('success', 'เปลี่ยนสิทธิ์ของ "' . $user->name . '" เป็น ' . ucfirst($validated['role']) . ' แล้ว');
+        return back()->with('success', 'ປ່ຽນສິດອະນຸຍາດຂອງ "' . $user->name . '" ເປັນ ' . ucfirst($validated['role']) . ' ແລ້ວ');
     }
 
     public function destroy(Request $request, User $user)
@@ -85,20 +85,20 @@ class AdminUserController extends Controller
         $this->authorizeAdmin($request);
 
         if ($user->id === $request->user()->id) {
-            return back()->withErrors(['delete' => 'ไม่สามารถลบบัญชีของตัวเองได้']);
+            return back()->withErrors(['delete' => 'ທ່ານບໍ່ສາມາດລຶບບັນຊີຂອງທ່ານເອງໄດ້']);
         }
 
         if ($user->bookings()->exists()) {
-            return back()->withErrors(['delete' => 'ไม่สามารถลบ "' . $user->name . '" ได้ เพราะยังมีประวัติการจองอยู่ในระบบ']);
+            return back()->withErrors(['delete' => 'ບໍ່ສາມາດລຶບໄດ້ "' . $user->name . '" ໄດ້ , ເພາະວ່າປະຫວັດການຈອງຍັງຢູ່ໃນລະບົບ']);
         }
 
         $user->delete();
 
-        return back()->with('success', 'ลบบัญชี "' . $user->name . '" เรียบร้อยแล้ว');
+        return back()->with('success', 'ລຶບບັນຊີ "' . $user->name . '" ສຳເລັດແລ້ວ');
     }
 
     private function authorizeAdmin(Request $request): void
     {
-        abort_unless($request->user()->role === 'admin', 403, 'สำหรับผู้ดูแลระบบเท่านั้น');
+        abort_unless($request->user()->role === 'admin', 403, 'ສຳລັບຜູ້ເບິ່ງແຍງລະບົບເທົ່ານັ້ນ');
     }
 }

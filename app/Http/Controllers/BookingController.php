@@ -107,7 +107,7 @@ class BookingController extends Controller
         );
 
         return redirect()
-            ->route('bookings.index')
+            ->route('dashboard')
             ->with('success', 'Booking confirmed for ' . $room->name . '.');
     }
 

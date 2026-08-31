@@ -2,6 +2,7 @@
 
 @section('content')
 
+<!-- ปรับแก้: ย้ายปุ่ม Back ออกมาไว้นอกกล่อง และใส่กรอบสีแดง -->
 <div class="mb-4 ml-2 mt-6">
     <a href="{{ route('admin.rooms.index') }}" 
        class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 border border-red-700 rounded-lg hover:bg-red-50 transition-colors">
