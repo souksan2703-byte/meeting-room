@@ -65,9 +65,9 @@
                 <div class="grid border-b relative" style="grid-template-columns: 220px 1fr; min-height: {{ $rowHeight }}px;">
                     <div class="p-3 border-r">
                         <a href="{{ route('rooms.show', $room) }}" class="font-semibold hover:underline">{{ $room->name }}</a>
-                        <p class="text-xs text-gray-500 mt-1">{{ $room->capacity }} คน</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ $room->capacity }} ຄົນ</p>
                         @if ($room->laneCount > 1)
-                            <p class="text-[10px] text-red-500 mt-1">⚠ มี {{ $room->laneCount }} คำขอชนเวลากัน</p>
+                            <p class="text-[10px] text-red-500 mt-1">⚠ มี {{ $room->laneCount }} ເວລາຈອງຫ້ອງປູຊຸມຕຳກັນ</p>
                         @endif
                     </div>
 
@@ -256,16 +256,16 @@
             <p>📅 <span id="modal-date"></span></p>
             <p>🕐 <span id="modal-time"></span></p>
             <p>👤 <span id="modal-user"></span></p>
-            <p>👥 <span id="modal-attendees"></span> ผู้เข้าร่วม</p>
+            <p>👥 <span id="modal-attendees"></span> ຜູ້ເຂົ້າຮ່ວມ</p>
         </div>
 
         <div id="modal-description-wrap" class="mb-4">
-            <p class="text-xs font-medium text-gray-500 mb-1">รายละเอียด</p>
+            <p class="text-xs font-medium text-gray-500 mb-1">ລາຍລະອຽດ</p>
             <p id="modal-description" class="text-sm text-gray-700"></p>
         </div>
 
         <a href="{{ route('bookings.index') }}" class="block text-center bg-red-700 text-white rounded-lg py-2 text-sm font-medium">
-            ไปที่ My Bookings
+            ໄປທີ່ My Bookings
         </a>
     </div>
 </div>

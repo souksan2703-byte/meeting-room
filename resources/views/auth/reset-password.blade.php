@@ -4,7 +4,7 @@
 
 @section('content')
 <h2 class="text-xl font-bold text-gray-800 mb-1">Reset your password</h2>
-<p class="text-sm text-gray-500 mb-6">ตั้งรหัสผ่านใหม่สำหรับบัญชีของคุณ</p>
+<p class="text-sm text-gray-500 mb-6">ຕັ້ງລະຫັດຜ່ານໃໝ່ສຳລັບບັນຊີຂອງທ່ານ.</p>
 
 @if ($errors->any())
     <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4">

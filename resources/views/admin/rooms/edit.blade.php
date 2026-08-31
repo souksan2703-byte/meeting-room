@@ -1,11 +1,18 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="max-w-xl mx-auto">
-    <a href="{{ route('admin.rooms.index') }}" class="text-sm text-gray-500">&larr; Back to Rooms</a>
 
+<div class="mb-4 ml-2 mt-6">
+    <a href="{{ route('admin.rooms.index') }}" 
+       class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 border border-red-700 rounded-lg hover:bg-red-50 transition-colors">
+        &larr; Back to Rooms
+    </a>
+</div>
+
+<!-- กล่องฟอร์มที่อยู่ตรงกลางหน้าจอ -->
+<div class="max-w-xl mx-auto">
     <h1 class="text-2xl font-bold mt-2 mb-1">Edit Room</h1>
-    <p class="text-gray-500 mb-6">แก้ไขรายละเอียดห้อง {{ $room->name }}</p>
+    <p class="text-gray-500 mb-6">ແກ້ໄຂລາຍລະອຽດຫ້ອງ {{ $room->name }}</p>
 
     @if ($errors->any())
         <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4">
@@ -34,7 +41,7 @@
                        class="w-full border rounded-lg p-2 text-sm" required>
             </div>
             <div>
-                <label class="text-xs font-medium text-gray-600">Capacity (คน)</label>
+                <label class="text-xs font-medium text-gray-600">Capacity (ຄົນ)</label>
                 <input type="number" name="capacity" value="{{ old('capacity', $room->capacity) }}" min="1"
                        class="w-full border rounded-lg p-2 text-sm" required>
             </div>
@@ -47,14 +54,9 @@
         </div>
 
         <div>
-            <label class="text-xs font-medium text-gray-600">Equipment (คั่นด้วยจุลภาค)</label>
+            <label class="text-xs font-medium text-gray-600">Equipment (ແຍກດ້ວຍເຄື່ອງໝາຍຈຸດ)</label>
             <input type="text" name="equipment" value="{{ old('equipment', implode(', ', $room->equipment ?? [])) }}"
                    class="w-full border rounded-lg p-2 text-sm">
-        </div>
-
-        <div>
-            <label class="text-xs font-medium text-gray-600">Usage Policies (Optional)</label>
-            <textarea name="policies" rows="2" class="w-full border rounded-lg p-2 text-sm">{{ old('policies', $room->policies) }}</textarea>
         </div>
 
         <div>
@@ -64,7 +66,7 @@
 
         <label class="flex items-center gap-2 text-sm">
             <input type="checkbox" name="requires_approval" value="1" {{ old('requires_approval', $room->requires_approval) ? 'checked' : '' }}>
-            การจองห้องนี้ต้องรอ Admin อนุมัติก่อน (Requires Approval)
+            ການຈອງຫ້ອງນີ້ຕ້ອງຖ້າ Admin ອະນຸມັດເທົ່ານັ້ນ (Requires Approval)
         </label>
 
         <div class="flex justify-end gap-3 pt-3 border-t">

@@ -5,7 +5,7 @@
     <a href="{{ route('admin.users.index') }}" class="text-sm text-gray-500">&larr; ກັບໄປຫາຜູ້ໃຊ້</a>
 
     <h1 class="text-2xl font-bold mt-2 mb-1">ເພີ່ມຜູ້ໃຊ້ໃໝ່</h1>
-    <p class="text-gray-500 mb-6">สร้างบัญชีให้พนักงานใหม่ (ไม่ต้องเปิดให้สมัครเองสาธารณะ)</p>
+    <p class="text-gray-500 mb-6">ສ້າງບັນຊີສຳລັບພະນັກງານໃໝ່ (ບໍ່ຈຳເປັນຕ້ອງເປີດເຜີຍຕໍ່ສາທາລະນະເພື່ອລົງທະບຽນ).</p>
 
     @if ($errors->any())
         <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4">

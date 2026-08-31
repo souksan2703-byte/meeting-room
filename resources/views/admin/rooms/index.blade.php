@@ -4,7 +4,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h1 class="text-3xl font-bold">Rooms</h1>
-        <p class="text-gray-500">จัดการห้องประชุมทั้งหมดในระบบ</p>
+        <p class="text-gray-500">ຈັດການຫ້ອງປະຊຸມທັງໝົດໃນລະບົບ</p>
     </div>
     <a href="{{ route('admin.rooms.create') }}" class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
         + Add New Room
@@ -56,7 +56,7 @@
                                 Edit
                             </a>
                             <form method="POST" action="{{ route('admin.rooms.destroy', $room) }}"
-                                  onsubmit="return confirm('ลบห้อง {{ $room->name }}? การจองทั้งหมด ({{ $room->bookings_count }} รายการ) ในห้องนี้จะถูกลบไปด้วย')">
+                                  onsubmit="return confirm('ລຶບຫ້ອງ {{ $room->name }}? ການຈອງທັງໝົດ ({{ $room->bookings_count }} รายการ) ในห้องนี้จะถูกลบไปด้วย')">
                                 @csrf @method('DELETE')
                                 <button class="text-red-600 border border-red-200 rounded-lg px-3 py-1 text-xs hover:bg-red-50">
                                     Delete
@@ -66,7 +66,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="p-4 text-center text-gray-500">ยังไม่มีห้องประชุมในระบบ</td></tr>
+                <tr><td colspan="6" class="p-4 text-center text-gray-500">ບໍ່ມີຫ້ອງປະຊຸມໃນລະບົບ</td></tr>
             @endforelse
         </tbody>
     </table>

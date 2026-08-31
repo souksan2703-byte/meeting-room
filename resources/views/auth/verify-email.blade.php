@@ -9,13 +9,13 @@
     </div>
     <h2 class="text-xl font-bold text-gray-800 mb-1">Verify your email</h2>
     <p class="text-sm text-gray-500">
-        เราได้ส่งลิงก์ยืนยันตัวตนไปที่อีเมลของคุณแล้ว กรุณาคลิกลิงก์ในอีเมลก่อนใช้งานระบบ
+        ພວກເຮົາໄດ້ສົ່ງລິ້ງຢືນຢັນໄປຫາອີເມວຂອງທ່ານແລ້ວ. ກະລຸນາຄລິກລິ້ງໃນອີເມວກ່ອນທີ່ຈະນຳໃຊ້ລະບົບ.
     </p>
 </div>
 
 @if (session('status') === 'verification-link-sent')
     <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3 mb-4 text-center">
-        ส่งลิงก์ยืนยันใหม่ไปที่อีเมลของคุณเรียบร้อยแล้ว
+       ລິ້ງຢືນຢັນໃໝ່ໄດ້ຖືກສົ່ງໄປຫາອີເມວຂອງທ່ານສຳເລັດແລ້ວ.
     </div>
 @endif
 

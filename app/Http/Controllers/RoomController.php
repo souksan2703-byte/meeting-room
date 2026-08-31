@@ -38,7 +38,7 @@ class RoomController extends Controller
             });
 
             $slots[] = [
-                'time' => $slotStart->format('h:i A'),
+                'time' => $slotStart->format('H:i'),
                 'value' => $slotStart->format('H:i'),
                 'available' => !$isBooked,
             ];
