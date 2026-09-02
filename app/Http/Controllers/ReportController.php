@@ -34,7 +34,7 @@ class ReportController extends Controller
 
         // ผู้จองบ่อยที่สุด 5 อันดับ
         $topBookers = $bookings
-            ->groupBy(fn ($b) => $b->user->name ?? 'ไม่ทราบชื่อ')
+            ->groupBy(fn ($b) => $b->user->name ?? 'ບໍ່ຮູ້ຊື່')
             ->map(fn ($group) => $group->count())
             ->sortDesc()
             ->take(5);
@@ -44,9 +44,9 @@ class ReportController extends Controller
 
         // ช่วงเวลาที่มีคนจองบ่อยที่สุด (แบ่งเป็นช่วงเช้า/บ่าย/เย็น)
         $byTimeSlot = [
-            'เช้า (08:00-12:00)' => $bookings->filter(fn ($b) => $b->start_time->hour >= 8 && $b->start_time->hour < 12)->count(),
-            'บ่าย (12:00-16:00)' => $bookings->filter(fn ($b) => $b->start_time->hour >= 12 && $b->start_time->hour < 16)->count(),
-            'เย็น (16:00-20:00)' => $bookings->filter(fn ($b) => $b->start_time->hour >= 16 && $b->start_time->hour < 20)->count(),
+            'ຕອນເຊົ້າ (08:00-12:00)' => $bookings->filter(fn ($b) => $b->start_time->hour >= 8 && $b->start_time->hour < 12)->count(),
+            'ຕອນບ່າຍ  (12:00-16:00)' => $bookings->filter(fn ($b) => $b->start_time->hour >= 12 && $b->start_time->hour < 17)->count(),
+        
         ];
 
         $totalRooms = Room::count();
@@ -65,6 +65,6 @@ class ReportController extends Controller
 
     private function authorizeAdmin(Request $request): void
     {
-        abort_unless($request->user()->role === 'admin', 403, 'สำหรับผู้ดูแลระบบเท่านั้น');
+        abort_unless($request->user()->role === 'admin', 403, 'ສຳລັບຜູ້ເບິ່ງແຍງລະບົບເທົ່ານັ້ນ');
     }
 }

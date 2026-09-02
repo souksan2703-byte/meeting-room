@@ -4,7 +4,7 @@
 
 @section('content')
 <h2 class="text-xl font-bold text-gray-800 mb-1">Forgot your password?</h2>
-<p class="text-sm text-gray-500 mb-6">กรอกอีเมลที่ใช้สมัคร เราจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ให้</p>
+<p class="text-sm text-gray-500 mb-6">ກະລຸນາໃສ່ທີ່ຢູ່ອີເມວທີ່ທ່ານໃຊ້ລົງທະບຽນ. ພວກເຮົາຈະສົ່ງລິ້ງເພື່ອຕັ້ງລະຫັດຜ່ານຂອງທ່ານຄືນໃໝ່.</p>
 
 @if (session('status'))
     <div class="bg-green-50 text-green-700 text-sm rounded-lg p-3 mb-4">
